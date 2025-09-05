@@ -4,6 +4,7 @@ import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/horizontal_card.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
+import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<List<Book>> getBooksData() async {
     var dao = BookDao();
-    var listBook = await dao.getBooks();
+    var listBook = await dao.getBooksRecentlyAdded();
     print(listBook);
     return listBook;
   }
@@ -43,8 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return SingleChildScrollView(
+      child: SafeArea(
         child: Column(
           children: [
             Row(
@@ -104,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Center(child: CircularProgressIndicator());
               },
             ),
-            SizedBox(height: 24.0),
+            SizedBox(height: 12.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -113,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text(
                     "Currently Read",
                     style: GoogleFonts.roboto(
-                      fontSize: 14,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -128,17 +129,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
                 if (snapshot.hasData) {
                   listBookCurrentlyRead = snapshot.data;
-                  return Expanded(
-                    child: ListView.separated(
-                      itemCount: listBookCurrentlyRead.length,
-                      itemBuilder: (context, index) {
-                        Book book = listBookCurrentlyRead[index];
-                        return HorizontalCard(book: book);
-                      },
-                      separatorBuilder: (context, index) {
-                        return Divider();
-                      },
-                    ),
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listBookCurrentlyRead.length,
+                    itemBuilder: (context, index) {
+                      Book book = listBookCurrentlyRead[index];
+                      return HorizontalCard(book: book);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
                   );
                 }
                 return Center(child: CircularProgressIndicator());

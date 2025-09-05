@@ -1,4 +1,5 @@
 import 'package:book_tracker_app/Model/Local/book.dart';
+import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,7 +11,8 @@ class HorizontalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      color: AppColors.primary,
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
@@ -36,9 +38,9 @@ class HorizontalCard extends StatelessWidget {
                 Text(
                   book.title,
                   style: GoogleFonts.roboto(
-                    fontSize: 14,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    // color: Colors.black87,
                   ),
                 ),
                 Text(
@@ -58,7 +60,7 @@ class HorizontalCard extends StatelessWidget {
                           value:
                               0.5, // nanti bisa dihubungkan dengan book.currentPage / book.totalPage
                           backgroundColor: Colors.grey[300],
-                          color: Colors.black,
+                          // color: Colors.black,
                           minHeight: 6,
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -69,7 +71,7 @@ class HorizontalCard extends StatelessWidget {
                         style: GoogleFonts.roboto(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black87,
+                          color: AppColors.secondary,
                         ),
                       ),
                     ],

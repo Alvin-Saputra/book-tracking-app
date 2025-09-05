@@ -1,0 +1,91 @@
+import 'package:book_tracker_app/Model/Local/book.dart';
+import 'package:book_tracker_app/Model/Local/book_dao.dart';
+import 'package:book_tracker_app/View/Components/vertical_card.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class LibraryScreen extends StatefulWidget {
+  const LibraryScreen({super.key});
+
+  @override
+  State<LibraryScreen> createState() => _LibraryScreenState();
+}
+
+class _LibraryScreenState extends State<LibraryScreen> {
+  late Future<List<Book>> listBookFuture;
+
+  Future<List<Book>> getAllBooksData() async {
+    var dao = BookDao();
+    return await dao.getAllBooks();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    listBookFuture = getAllBooksData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: FutureBuilder<List<Book>>(
+          future: listBookFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            List<Book> listBook = snapshot.data!;
+
+            return CustomScrollView(
+              slivers: [
+                // ✅ Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 32.0, bottom: 24.0),
+                    child: Center(
+                      child: Text(
+                        "Book Collections",
+                        style: GoogleFonts.roboto(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // ✅ GridView jadi SliverGrid
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      Book book = listBook[index];
+                      return VerticalCard(book: book);
+                    }, childCount: listBook.length),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          mainAxisExtent: 360,
+                        ),
+                  ),
+                ),
+
+                // ✅ Tambahkan SliverToBoxAdapter untuk memberi ruang bawah
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: kBottomNavigationBarHeight + 24), // tinggi kira-kira setara dengan navbar
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

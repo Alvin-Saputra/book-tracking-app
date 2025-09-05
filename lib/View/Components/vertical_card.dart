@@ -1,4 +1,5 @@
 import 'package:book_tracker_app/Model/Local/book.dart';
+import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,6 +14,8 @@ class VerticalCard extends StatelessWidget {
       // <-- Tambahkan SizedBox di sini
       width: 200, // <--- Sesuaikan lebar yang Anda inginkan untuk seluruh card
       child: Card(
+        elevation: 0,
+        color: AppColors.primary,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -66,8 +69,8 @@ class VerticalCard extends StatelessWidget {
                       icon: const Icon(Icons.arrow_forward, size: 18),
                       onPressed: () {},
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.secondary,
+                        foregroundColor: AppColors.primary,
                         shape: const CircleBorder(),
                         padding: EdgeInsets.zero, // Hapus padding default
                       ),

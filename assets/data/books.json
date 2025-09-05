@@ -3,7 +3,7 @@
     "title": "The Great Gatsby",
     "author": "F. Scott Fitzgerald",
     "genre": "Classic",
-    "total_page": 180,
+    "total_page": 50,
     "reading_status": "started",
     "added_at": "2023-10-01",
     "image_url": "assets/images/book_1.jpg"
@@ -45,5 +45,14 @@
     "added_at": "2023-10-02",
     "progress": 70,
     "image_url": "assets/images/book_4.jpg"
+  },
+  {
+    "title": "Tale of The Frog",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Classic",
+    "total_page": 180,
+    "reading_status": "started",
+    "added_at": "2023-10-01",
+    "image_url": "assets/images/book_1.jpg"
   }
 ]
