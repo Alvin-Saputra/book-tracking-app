@@ -1,10 +1,8 @@
 import 'dart:ffi';
-
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/horizontal_card.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
-import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

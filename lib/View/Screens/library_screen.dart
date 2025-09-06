@@ -27,65 +27,62 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: FutureBuilder<List<Book>>(
-          future: listBookFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            }
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            List<Book> listBook = snapshot.data!;
-
-            return CustomScrollView(
-              slivers: [
-                // ✅ Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 32.0, bottom: 24.0),
-                    child: Center(
-                      child: Text(
-                        "Book Collections",
-                        style: GoogleFonts.roboto(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+    return FutureBuilder<List<Book>>(
+      future: listBookFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+    
+        List<Book> listBook = snapshot.data!;
+    
+        return CustomScrollView(
+          slivers: [
+            // ✅ Header
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 32.0, bottom: 24.0),
+                child: Center(
+                  child: Text(
+                    "Book Collections",
+                    style: GoogleFonts.roboto(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-
-                // ✅ GridView jadi SliverGrid
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  sliver: SliverGrid(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      Book book = listBook[index];
-                      return VerticalCard(book: book);
-                    }, childCount: listBook.length),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          mainAxisExtent: 360,
-                        ),
-                  ),
+              ),
+            ),
+    
+            // ✅ GridView jadi SliverGrid
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  Book book = listBook[index];
+                  return VerticalCard(book: book);
+                }, childCount: listBook.length),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 6,
+                  crossAxisSpacing: 0,
+                  mainAxisExtent: 360,
                 ),
-
-                // ✅ Tambahkan SliverToBoxAdapter untuk memberi ruang bawah
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: kBottomNavigationBarHeight + 24), // tinggi kira-kira setara dengan navbar
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+              ),
+            ),
+    
+            // ✅ Tambahkan SliverToBoxAdapter untuk memberi ruang bawah
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: kBottomNavigationBarHeight + 24,
+              ), // tinggi kira-kira setara dengan navbar
+            ),
+          ],
+        );
+      },
     );
   }
 }
