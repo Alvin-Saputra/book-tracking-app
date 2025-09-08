@@ -1,5 +1,6 @@
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_database.dart';
+import 'package:sqflite/sqflite.dart';
 
 class BookDao {
   final BookDatabase _db = BookDatabase.instance;
@@ -83,5 +84,14 @@ class BookDao {
     );
 
     return listBook;
+  }
+
+    Future<int> addTask(Map<String, dynamic> bookMap) async {
+     final bookDB = await _db.database;
+     return bookDB.insert(
+      'books',
+      bookMap,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }

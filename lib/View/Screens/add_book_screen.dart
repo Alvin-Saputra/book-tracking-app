@@ -1,10 +1,15 @@
-import 'dart:ui' as BorderType;
-
+import 'package:book_tracker_app/Model/Local/book_dao.dart';
+import 'package:book_tracker_app/View/Components/custom_drop_down_field.dart';
+import 'package:book_tracker_app/View/Components/custom_input_text_field.dart';
 import 'package:book_tracker_app/constant/color.dart';
-import 'package:dotted_border/dotted_border.dart';
+import 'package:book_tracker_app/utils/image_cropper_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({super.key});
@@ -16,10 +21,71 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController controllerTitle = TextEditingController();
-  TextEditingController controllerAuthor = TextEditingController();
-  TextEditingController controllerGenre = TextEditingController();
-  TextEditingController controllerTotalPage = TextEditingController();
+  late File? croppedImage = null;
+  bool _isProcessing = false;
+
+  final List<String> readingStatus = ['Not Started', 'Started', 'Finished'];
+  String? selectedReadingStatus;
+
+  final TextEditingController controllerTitle = TextEditingController();
+  final TextEditingController controllerAuthor = TextEditingController();
+  final TextEditingController controllerGenre = TextEditingController();
+  final TextEditingController controllerTotalPage = TextEditingController();
+  final TextEditingController controllerProgress = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedReadingStatus = readingStatus[0];
+  }
+
+  Future<void> pickFromGallery() async {
+    if (_isProcessing) return;
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    final XFile? image = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (image == null) {
+      setState(() {
+        _isProcessing = false;
+      });
+      return;
+    }
+
+    File? croppedResult = await cropImage(File(image.path));
+
+    // ✅ 1. KONDISI DIPERBAIKI: Periksa hasil crop, bukan state
+    if (croppedResult != null) {
+      final appDir = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileExtension = path.extension(croppedResult.path);
+      final newFileName = 'cover_$timestamp$fileExtension';
+
+      final permanentFilePath = path.join(appDir.path, newFileName);
+      final permanentFile = await croppedResult.copy(permanentFilePath);
+
+      setState(() {
+        croppedImage = permanentFile;
+        print('Gambar disimpan di path: ${croppedImage!.path}');
+      });
+    }
+
+    // ✅ 2. SELALU SET _isProcessing ke false di akhir
+    setState(() {
+      _isProcessing = false;
+    });
+  }
+
+  Future<int> _addTaskToDB(Map<String, dynamic> bookMap) async {
+    var dao = BookDao();
+    int row = await dao.addTask(bookMap);
+    print("Row ID of inserted task: $row");
+    return row; // Return the row ID of the inserted task
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,29 +103,39 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     style: GoogleFonts.roboto(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      // color: Colors.black87,
                     ),
                   ),
                 ),
               ],
             ),
-            Container(
-              margin: EdgeInsets.only(top: 32.0),
-              height: 225,
-              width: 175,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                border: DashedBorder.fromBorderSide(
-                  side: BorderSide(color: Colors.black, width: 1.0),
-                  dashLength: 4,
+            InkWell(
+              onTap: pickFromGallery,
+              borderRadius: BorderRadius.circular(24.0),
+              child: Container(
+                margin: const EdgeInsets.only(top: 32.0),
+                height: 225,
+                width: 175,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  border: DashedBorder.fromBorderSide(
+                    side: const BorderSide(color: Colors.black, width: 1.0),
+                    dashLength: 4,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+                  image: (croppedImage != null)
+                      ? DecorationImage(
+                          image: FileImage(croppedImage!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(24.0))
-              ),
-            
-              child: const Center(
-                child: Text(
-                  "+ Book Cover",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                child: Center(
+                  child: (croppedImage == null)
+                      ? Text(
+                          "+ Book Cover",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        )
+                      : null,
                 ),
               ),
             ),
@@ -69,57 +145,119 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   children: [
-                    TextFormField(
-                      validator: (value) =>
-                          (value == null || value.isEmpty || value == '')
+                    CustomInputField(
+                      validator: (value) => (value == null || value.isEmpty)
                           ? "Please enter a title"
                           : null,
                       controller: controllerTitle,
-                      decoration: const InputDecoration(labelText: "Title"),
+                      // ✅ Gunakan dekorasi kustom
+                      label: 'Title',
                     ),
-                    SizedBox(height: 12.0), // Added spacing between fields
-                    TextFormField(
-                      validator: (value) =>
-                          (value == null || value.isEmpty || value == '')
-                          ? "Please enter author"
+                    const SizedBox(height: 16.0), // Jarak antar field
+                    CustomInputField(
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Please enter an author"
                           : null,
                       controller: controllerAuthor,
-                      decoration: const InputDecoration(labelText: "Author"),
+                      // ✅ Gunakan dekorasi kustom
+                      label: 'Author',
                     ),
-                    SizedBox(height: 12.0),
-                    TextFormField(
-                      validator: (value) =>
-                          (value == null || value.isEmpty || value == '')
+                    const SizedBox(height: 16.0),
+                    CustomInputField(
+                      validator: (value) => (value == null || value.isEmpty)
                           ? "Please enter a genre"
                           : null,
                       controller: controllerGenre,
-                      decoration: const InputDecoration(labelText: "Genre"),
+                      // ✅ Gunakan dekorasi kustom
+                      label: 'Genre',
                     ),
-                    SizedBox(height: 12.0),
-                    TextFormField(
-                      validator: (value) =>
-                          (value == null || value.isEmpty || value == '')
-                          ? "Please enter total page"
+                    const SizedBox(height: 16.0),
+                    CustomInputField(
+                      validator: (value) => (value == null || value.isEmpty)
+                          ? "Please enter total pages"
                           : null,
                       controller: controllerTotalPage,
-                      decoration: const InputDecoration(labelText: "Total Page"),
+                      keyboardType: TextInputType.number, // Keyboard numerik
+                      // ✅ Gunakan dekorasi kustom
+                      label: 'Total Pages',
                     ),
-                    SizedBox(height: 32.0),
+                    SizedBox(height: 16.0),
+                    CustomDropdownField(
+                      label: 'Reading Status',
+                      value: selectedReadingStatus,
+                      items: readingStatus,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedReadingStatus = newValue;
+                        });
+                      },
+                      validator: (value) =>
+                          value == null ? 'Please select a genre' : null,
+                    ),
+                    if (selectedReadingStatus == 'Started') ...[
+                      SizedBox(height: 16.0),
+                      CustomInputField(
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? "Please enter pages progress"
+                            : null,
+                        controller: controllerProgress,
+                        keyboardType: TextInputType.number, // Keyboard numerik
+                        // ✅ Gunakan dekorasi kustom
+                        label: 'Progress',
+                      ),
+                    ],
+                    const SizedBox(height: 32.0),
                     SizedBox(
-                      width: double.infinity, // Bikin tombol selebar parent
+                      width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {}
+                          if (_formKey.currentState!.validate()) {
+                            // ✅ 2. KONVERSI STRING KE INT DENGAN AMAN
+                            final totalPage =
+                                int.tryParse(controllerTotalPage.text) ?? 0;
+                            final progress =
+                                int.tryParse(controllerProgress.text) ?? 0;
+
+                            Map<String, dynamic> bookMap = {
+                              'title': controllerTitle.text,
+                              'author': controllerAuthor.text,
+                              'genre': controllerGenre.text,
+                              'total_page': totalPage,
+                              'progress': progress,
+                              'reading_status': selectedReadingStatus!,
+                              'added_at':
+                                  "${DateTime.now().day.toString().padLeft(2, '0')}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().year}",
+                              'image_url': croppedImage?.path.toString() ?? '',
+                            };
+
+                            int row = await _addTaskToDB(bookMap);
+
+                            if (row > 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Book Added Successfully'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to Add Book'),
+                                ),
+                              );
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           backgroundColor: AppColors.secondary,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                          ), // Tinggi tombol
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32.0),
+                          ),
                         ),
                         child: const Text(
-                          "Add Task",
+                          "Add Book",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
