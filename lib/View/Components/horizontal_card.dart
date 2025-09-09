@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,27 @@ class HorizontalCard extends StatelessWidget {
   const HorizontalCard({super.key, required this.book});
 
   final Book book;
+
+  Widget _buildBookImage() {
+    // Cek jika path adalah asset atau file dari penyimpanan
+    if (book.imageUrl.startsWith('assets/')) {
+      // Jika path dimulai dengan 'assets/', gunakan Image.asset
+      return Image.asset(
+        book.imageUrl,
+        height: 116,
+        width: 86,
+        fit: BoxFit.cover,
+      );
+    } else {
+      // Jika tidak, itu adalah file dari penyimpanan, gunakan Image.file
+      return Image.file(
+        File(book.imageUrl),
+        height: 116,
+        width: 86,
+        fit: BoxFit.cover,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +45,7 @@ class HorizontalCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
-              child: Image.asset(
-                book.imageUrl,
-                height: 116,
-                width: 86,
-                fit: BoxFit.cover,
-              ),
+              child: _buildBookImage(),
             ),
             const SizedBox(width: 24.0),
             Column(

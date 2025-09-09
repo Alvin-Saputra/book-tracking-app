@@ -86,12 +86,23 @@ class BookDao {
     return listBook;
   }
 
-    Future<int> addTask(Map<String, dynamic> bookMap) async {
-     final bookDB = await _db.database;
-     return bookDB.insert(
+  Future<int> addTask(Map<String, dynamic> bookMap) async {
+    final bookDB = await _db.database;
+    return bookDB.insert(
       'books',
       bookMap,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<bool> updateTask(String bookId, Map<String, dynamic> bookMap) async {
+    final bookDB = await _db.database;
+    int rowsAffected = await bookDB.update(
+      'books',
+      bookMap,
+      where: 'id = ?',
+      whereArgs: [bookId],
+    );
+    return rowsAffected > 0;
   }
 }

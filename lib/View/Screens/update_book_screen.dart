@@ -1,3 +1,4 @@
+import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/custom_drop_down_field.dart';
 import 'package:book_tracker_app/View/Components/custom_input_text_field.dart';
@@ -11,14 +12,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-class AddBookScreen extends StatefulWidget {
-  const AddBookScreen({super.key});
+class UpdateBookScreen extends StatefulWidget {
+  const UpdateBookScreen({super.key, required this.book});
+
+  final Book book;
 
   @override
-  State<AddBookScreen> createState() => _AddBookScreenState();
+  State<UpdateBookScreen> createState() => _UpdateBookScreenState();
 }
 
-class _AddBookScreenState extends State<AddBookScreen> {
+class _UpdateBookScreenState extends State<UpdateBookScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late File? croppedImage = null;
@@ -37,6 +40,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
   void initState() {
     super.initState();
     selectedReadingStatus = readingStatus[0];
+    Book bookInfo = widget.book;
+    controllerTitle.text = bookInfo.title;
   }
 
   Future<void> pickFromGallery() async {

@@ -44,14 +44,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
             // ✅ Header
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(top: 32.0, bottom: 24.0),
-                child: Center(
-                  child: Text(
-                    "Book Collections",
-                    style: GoogleFonts.roboto(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                padding: const EdgeInsets.only(top: 48.0, bottom: 8.0, left: 16.0),
+                child: Text(
+                  "Collections",
+                  style: GoogleFonts.roboto(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -59,7 +57,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     
             // ✅ GridView jadi SliverGrid
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   Book book = listBook[index];
@@ -67,7 +65,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 }, childCount: listBook.length),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 6,
+                  mainAxisSpacing: 0,
                   crossAxisSpacing: 0,
                   mainAxisExtent: 360,
                 ),
@@ -77,7 +75,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             // ✅ Tambahkan SliverToBoxAdapter untuk memberi ruang bawah
             const SliverToBoxAdapter(
               child: SizedBox(
-                height: kBottomNavigationBarHeight + 24,
+                height: kBottomNavigationBarHeight + 10,
               ), // tinggi kira-kira setara dengan navbar
             ),
           ],

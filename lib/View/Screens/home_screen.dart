@@ -42,108 +42,111 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0, top: 24.0),
-                  child: Text(
-                    "BookShelf",
-                    style: GoogleFonts.roboto(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0),
+      child: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0, left: 12.0),
+                    child: Text(
+                      "Home",
+                      style: GoogleFonts.roboto(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    "Recently Added",
-                    style: GoogleFonts.roboto(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                ],
+              ),
+              SizedBox(height: 12.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Text(
+                      "Recently Added",
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            FutureBuilder(
-              future: listBookFuture,
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                }
-                if (snapshot.hasData) {
-                  listBook = snapshot.data;
-                  return SizedBox(
-                    height: 354,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: listBook.length,
+                ],
+              ),
+              FutureBuilder(
+                future: listBookFuture,
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text("Error: ${snapshot.error}"));
+                  }
+                  if (snapshot.hasData) {
+                    listBook = snapshot.data;
+                    return SizedBox(
+                      height: 354,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: listBook.length,
+                        itemBuilder: (context, index) {
+                          Book book = listBook[index];
+                          return VerticalCard(book: book);
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        },
+                      ),
+                    );
+                  }
+                  return Center(child: CircularProgressIndicator());
+                },
+              ),
+              SizedBox(height: 12.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0, left: 12.0),
+                    child: Text(
+                      "Currently Read",
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              FutureBuilder(
+                future: listBookFutureCurrentlyRead,
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text("Error: ${snapshot.error}"));
+                  }
+                  if (snapshot.hasData) {
+                    listBookCurrentlyRead = snapshot.data;
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: listBookCurrentlyRead.length,
                       itemBuilder: (context, index) {
-                        Book book = listBook[index];
-                        return VerticalCard(book: book);
+                        Book book = listBookCurrentlyRead[index];
+                        return HorizontalCard(book: book);
                       },
                       separatorBuilder: (context, index) {
                         return Divider();
                       },
-                    ),
-                  );
-                }
-                return Center(child: CircularProgressIndicator());
-              },
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0, left: 12.0),
-                  child: Text(
-                    "Currently Read",
-                    style: GoogleFonts.roboto(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            FutureBuilder(
-              future: listBookFutureCurrentlyRead,
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                }
-                if (snapshot.hasData) {
-                  listBookCurrentlyRead = snapshot.data;
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: listBookCurrentlyRead.length,
-                    itemBuilder: (context, index) {
-                      Book book = listBookCurrentlyRead[index];
-                      return HorizontalCard(book: book);
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                  );
-                }
-                return Center(child: CircularProgressIndicator());
-              },
-            ),
-          ],
+                    );
+                  }
+                  return Center(child: CircularProgressIndicator());
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
