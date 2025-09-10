@@ -343,7 +343,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
                                     content: Text('Book Updated Successfully'),
                                   ),
                                 );
-                                
+                                Navigator.pop(context);
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

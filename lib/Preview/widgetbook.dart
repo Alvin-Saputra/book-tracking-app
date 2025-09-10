@@ -34,7 +34,7 @@ class HotReload extends StatelessWidget {
           useCases: [
             WidgetbookUseCase(
               name: 'Vertical Card',
-              builder: (context) => Center(child: VerticalCard(book: book)),
+              builder: (context) => Center(child: VerticalCard(book: book, onDataUpdated: (){},)),
             ),
 
             WidgetbookUseCase(

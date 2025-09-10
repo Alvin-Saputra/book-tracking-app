@@ -25,6 +25,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
     listBookFuture = getAllBooksData();
   }
 
+  void _refreshData() {
+    setState(() {
+      listBookFuture = BookDao().getAllBooks();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Book>>(
@@ -36,9 +42,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-    
+
         List<Book> listBook = snapshot.data!;
-    
+
         return CustomScrollView(
           slivers: [
             // // ✅ Header
@@ -54,14 +60,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
             //     ),
             //   ),
             // ),
-    
+
             // ✅ GridView jadi SliverGrid
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   Book book = listBook[index];
-                  return VerticalCard(book: book);
+                  return VerticalCard(book: book, onDataUpdated: _refreshData);
                 }, childCount: listBook.length),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -71,7 +77,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 ),
               ),
             ),
-    
+
             // ✅ Tambahkan SliverToBoxAdapter untuk memberi ruang bawah
             const SliverToBoxAdapter(
               child: SizedBox(

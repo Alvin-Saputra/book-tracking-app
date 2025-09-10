@@ -1,35 +1,31 @@
 import 'dart:io';
-
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/View/Screens/detail_book_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class VerticalCard extends StatefulWidget {
-  VerticalCard({super.key, required this.book});
+class VerticalCard extends StatelessWidget {
+  const VerticalCard({
+    super.key,
+    required this.book,
+    required this.onDataUpdated,
+  });
 
   final Book book;
+  final VoidCallback onDataUpdated;
 
-  @override
-  State<VerticalCard> createState() => _VerticalCardState();
-}
-
-class _VerticalCardState extends State<VerticalCard> {
   Widget _buildBookImage() {
-    // Cek jika path adalah asset atau file dari penyimpanan
-    if (widget.book.imageUrl.startsWith('assets/')) {
-      // Jika path dimulai dengan 'assets/', gunakan Image.asset
+    if (book.imageUrl.startsWith('assets/')) {
       return Image.asset(
-        widget.book.imageUrl,
+        book.imageUrl,
         height: 270,
         width: 175,
         fit: BoxFit.cover,
       );
     } else {
-      // Jika tidak, itu adalah file dari penyimpanan, gunakan Image.file
       return Image.file(
-        File(widget.book.imageUrl),
+        File(book.imageUrl),
         height: 270,
         width: 175,
         fit: BoxFit.cover,
@@ -40,61 +36,57 @@ class _VerticalCardState extends State<VerticalCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap:() {
+      onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return DetailBookScreen(book: widget.book,);
-              },
-            ),
-          ).then((value) {
-            // Refresh the task list after adding a new task
-            setState(() {
-             
-            });
-          });
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return DetailBookScreen(book: book);
+            },
+          ),
+        ).then((value) {
+          // ✅ 2. PERBAIKI PEMANGGILAN CALLBACK
+          // 'value' akan bernilai true jika ada update atau delete
+          if (value == true) {
+            onDataUpdated(); // Panggil fungsi yang diberikan oleh induk
+          }
+        });
       },
       child: SizedBox(
-        // <-- Tambahkan SizedBox di sini
-        width: 200, // <--- Sesuaikan lebar yang Anda inginkan untuk seluruh card
+        width: 200,
         child: Card(
           elevation: 0,
           color: AppColors.primary,
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
-              mainAxisSize: MainAxisSize
-                  .min, // Biarkan ini agar Column tidak mengambil tinggi penuh
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  child: _buildBookImage(),
                   borderRadius: BorderRadius.circular(12.0),
+                  child: _buildBookImage(),
                 ),
-                SizedBox(height: 12.0),
+                const SizedBox(height: 12.0),
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween, // Ini akan bekerja sekarang
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      // Bungkus Column dengan Expanded agar mengambil sisa ruang yang tersedia setelah IconButton
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.book.title,
+                            book.title,
                             style: GoogleFonts.roboto(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
-                            overflow: TextOverflow
-                                .ellipsis, // Tambahkan ini jika teks terlalu panjang
-                            maxLines: 1, // Batasi jumlah baris
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                           Text(
-                            widget.book.author,
+                            book.author,
                             style: GoogleFonts.roboto(fontSize: 12),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
@@ -107,12 +99,25 @@ class _VerticalCardState extends State<VerticalCard> {
                       height: 24,
                       child: IconButton(
                         icon: const Icon(Icons.arrow_forward, size: 18),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DetailBookScreen(book: book);
+                              },
+                            ),
+                          ).then((value) {
+                            if (value == true) {
+                              onDataUpdated();
+                            }
+                          });
+                        },
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.secondary,
                           foregroundColor: AppColors.primary,
                           shape: const CircleBorder(),
-                          padding: EdgeInsets.zero, // Hapus padding default
+                          padding: EdgeInsets.zero,
                         ),
                       ),
                     ),

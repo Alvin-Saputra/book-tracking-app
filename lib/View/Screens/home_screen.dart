@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Book>> listBookFutureCurrentlyRead;
   late List<Book> listBookCurrentlyRead;
 
-  Future<List<Book>> getBooksData() async {
+  Future<List<Book>> getBooksDataRecentlyAdded() async {
     var dao = BookDao();
     var listBook = await dao.getBooksRecentlyAdded();
     print(listBook);
@@ -36,8 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void initState() {
     super.initState();
-    listBookFuture = getBooksData();
+    listBookFuture = getBooksDataRecentlyAdded();
     listBookFutureCurrentlyRead = getBooksDataCurrentlyRead();
+  }
+
+  void _refreshData() {
+    setState(() {
+      listBookFuture = BookDao().getBooksRecentlyAdded();
+    });
   }
 
   @override
@@ -48,12 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SafeArea(
           child: Column(
             children: [
-             
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 12.0, bottom: 4.0, top: 8.0),
+                    padding: const EdgeInsets.only(
+                      left: 12.0,
+                      bottom: 4.0,
+                      top: 8.0,
+                    ),
                     child: Text(
                       "Recently Added",
                       style: GoogleFonts.roboto(
@@ -66,29 +75,30 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               FutureBuilder(
                 future: listBookFuture,
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(child: Text("Error: ${snapshot.error}"));
-                  }
-                  if (snapshot.hasData) {
-                    listBook = snapshot.data;
-                    return SizedBox(
-                      height: 354,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: listBook.length,
-                        itemBuilder: (context, index) {
-                          Book book = listBook[index];
-                          return VerticalCard(book: book);
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider();
-                        },
-                      ),
-                    );
-                  }
-                  return Center(child: CircularProgressIndicator());
-                },
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text("Error: ${snapshot.error}"));
+                      }
+                      if (snapshot.hasData) {
+                        listBook = snapshot.data;
+                        return SizedBox(
+                          height: 354,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: listBook.length,
+                            itemBuilder: (context, index) {
+                              Book book = listBook[index];
+                              return VerticalCard(book: book, onDataUpdated: _refreshData,);
+                            },
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
+                          ),
+                        );
+                      }
+                      return Center(child: CircularProgressIndicator());
+                    },
               ),
               SizedBox(height: 12.0),
               Row(
@@ -108,27 +118,28 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               FutureBuilder(
                 future: listBookFutureCurrentlyRead,
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(child: Text("Error: ${snapshot.error}"));
-                  }
-                  if (snapshot.hasData) {
-                    listBookCurrentlyRead = snapshot.data;
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: listBookCurrentlyRead.length,
-                      itemBuilder: (context, index) {
-                        Book book = listBookCurrentlyRead[index];
-                        return HorizontalCard(book: book);
-                      },
-                      separatorBuilder: (context, index) {
-                        return Divider();
-                      },
-                    );
-                  }
-                  return Center(child: CircularProgressIndicator());
-                },
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text("Error: ${snapshot.error}"));
+                      }
+                      if (snapshot.hasData) {
+                        listBookCurrentlyRead = snapshot.data;
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: listBookCurrentlyRead.length,
+                          itemBuilder: (context, index) {
+                            Book book = listBookCurrentlyRead[index];
+                            return HorizontalCard(book: book);
+                          },
+                          separatorBuilder: (context, index) {
+                            return Divider();
+                          },
+                        );
+                      }
+                      return Center(child: CircularProgressIndicator());
+                    },
               ),
             ],
           ),
