@@ -5,7 +5,7 @@
     "genre": "Classic",
     "total_page": 50,
     "reading_status": "finished",
-    "added_at": "2023-10-01",
+    "added_at": "01-10-2023",
     "image_url": "assets/images/book_1.jpg"
   },
   {
@@ -14,7 +14,7 @@
     "genre": "Dystopian",
     "total_page": 328,
     "reading_status": "not_started",
-    "added_at": "2023-10-02",
+    "added_at": "02-10-2023",
     "image_url": "assets/images/book_2.jpg"
   },
   {
@@ -23,7 +23,7 @@
     "genre": "Dystopian",
     "total_page": 328,
     "reading_status": "finished",
-    "added_at": "2023-10-02",
+    "added_at": "02-10-2023",
     "image_url": "assets/images/book_1.jpg"
   },
   {
@@ -32,7 +32,7 @@
     "genre": "Dystopian",
     "total_page": 328,
     "reading_status": "started",
-    "added_at": "2023-10-02",
+    "added_at": "02-10-2023",
     "progress": 100,
     "image_url": "assets/images/book_3.jpg"
   },
@@ -42,7 +42,7 @@
     "genre": "Dystopian",
     "total_page": 328,
     "reading_status": "started",
-    "added_at": "2023-10-02",
+    "added_at": "02-10-2023",
     "progress": 70,
     "image_url": "assets/images/book_4.jpg"
   },
@@ -52,7 +52,7 @@
     "genre": "Classic",
     "total_page": 180,
     "reading_status": "not_started",
-    "added_at": "2023-10-01",
+    "added_at": "01-10-2023",
     "image_url": "assets/images/book_1.jpg"
   }
 ]

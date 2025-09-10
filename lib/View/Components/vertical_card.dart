@@ -45,11 +45,7 @@ class VerticalCard extends StatelessWidget {
             },
           ),
         ).then((value) {
-          // ✅ 2. PERBAIKI PEMANGGILAN CALLBACK
-          // 'value' akan bernilai true jika ada update atau delete
-          if (value == true) {
-            onDataUpdated(); // Panggil fungsi yang diberikan oleh induk
-          }
+            onDataUpdated(); 
         });
       },
       child: SizedBox(
@@ -79,7 +75,7 @@ class VerticalCard extends StatelessWidget {
                           Text(
                             book.title,
                             style: GoogleFonts.roboto(
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -87,9 +83,9 @@ class VerticalCard extends StatelessWidget {
                           ),
                           Text(
                             book.author,
-                            style: GoogleFonts.roboto(fontSize: 12),
+                            style: GoogleFonts.roboto(fontSize: 12, color: AppColors.text),
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                            maxLines: 2,
                           ),
                         ],
                       ),

@@ -152,8 +152,8 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
             ),
             TextButton(
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                Navigator.of(context).pop(true); // Mengembalikan true
+              onPressed: () { 
+                Navigator.of(context).pop(true);
               },
             ),
           ],
@@ -177,7 +177,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
           );
         }
       }
-      Navigator.pop(context);
+      
     }
   }
 

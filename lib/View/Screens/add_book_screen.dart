@@ -74,7 +74,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
       });
     }
 
-    // ✅ 2. SELALU SET _isProcessing ke false di akhir
     setState(() {
       _isProcessing = false;
     });
@@ -85,6 +84,17 @@ class _AddBookScreenState extends State<AddBookScreen> {
     int row = await dao.addBook(bookMap);
     print("Row ID of inserted task: $row");
     return row; // Return the row ID of the inserted task
+  }
+
+  void clearForm() {
+    setState(() {
+      controllerTitle.clear();
+      controllerAuthor.clear();
+      controllerGenre.clear();
+      controllerTotalPage.clear();
+      controllerProgress.clear();
+      selectedReadingStatus = readingStatus[0];
+    });
   }
 
   @override
@@ -237,6 +247,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                   content: Text('Book Added Successfully'),
                                 ),
                               );
+                              clearForm();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

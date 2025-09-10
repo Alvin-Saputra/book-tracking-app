@@ -10,8 +10,6 @@ class BookDao {
 
     List<Map> bookMaps = await bookDB.query(
       'books',
-      where: 'reading_status = ?', // <-- filter kolom
-      whereArgs: ['not_started'], // <-- isi parameter
       orderBy: 'id DESC',
       limit: 5,
     );
@@ -22,7 +20,7 @@ class BookDao {
         id: bookMaps[index]['id'],
         title: bookMaps[index]['title'],
         author: bookMaps[index]['author'],
-        genre: bookMaps[index]['author'],
+        genre: bookMaps[index]['genre'],
         totalPage: bookMaps[index]['total_page'],
         readingStatus: bookMaps[index]['reading_status'],
         progress: bookMaps[index]['progress'],
@@ -54,7 +52,7 @@ class BookDao {
         id: bookMaps[index]['id'],
         title: bookMaps[index]['title'],
         author: bookMaps[index]['author'],
-        genre: bookMaps[index]['author'],
+        genre: bookMaps[index]['genre'],
         totalPage: bookMaps[index]['total_page'],
         readingStatus: bookMaps[index]['reading_status'],
         progress: bookMaps[index]['progress'],
@@ -77,7 +75,7 @@ class BookDao {
         id: bookMaps[index]['id'],
         title: bookMaps[index]['title'],
         author: bookMaps[index]['author'],
-        genre: bookMaps[index]['author'],
+        genre: bookMaps[index]['genre'],
         totalPage: bookMaps[index]['total_page'],
         readingStatus: bookMaps[index]['reading_status'],
         progress: bookMaps[index]['progress'],

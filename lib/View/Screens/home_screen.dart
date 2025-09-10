@@ -3,6 +3,7 @@ import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/horizontal_card.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
+import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,10 +16,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Book>> listBookFuture;
-  late List<Book> listBook;
+  List<Book> listBook = [];
 
   late Future<List<Book>> listBookFutureCurrentlyRead;
-  late List<Book> listBookCurrentlyRead;
+  List<Book> listBookCurrentlyRead = [];
 
   Future<List<Book>> getBooksDataRecentlyAdded() async {
     var dao = BookDao();
@@ -43,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _refreshData() {
     setState(() {
       listBookFuture = BookDao().getBooksRecentlyAdded();
+      listBookFutureCurrentlyRead = getBooksDataCurrentlyRead();
     });
   }
 
@@ -52,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.only(left: 4.0),
       child: SingleChildScrollView(
         child: SafeArea(
-          child: Column(
+          child: (listBook.isEmpty && listBookCurrentlyRead.isEmpty)?Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -68,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.roboto(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: AppColors.text
                       ),
                     ),
                   ),
@@ -111,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.roboto(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: AppColors.text
                       ),
                     ),
                   ),
@@ -131,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: listBookCurrentlyRead.length,
                           itemBuilder: (context, index) {
                             Book book = listBookCurrentlyRead[index];
-                            return HorizontalCard(book: book);
+                            return HorizontalCard(book: book, onDataUpdated: _refreshData,);
                           },
                           separatorBuilder: (context, index) {
                             return Divider();
@@ -142,6 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
               ),
             ],
+          ):Center(
+            child: LinearProgressIndicator()
           ),
         ),
       ),

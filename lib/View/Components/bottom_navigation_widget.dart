@@ -3,6 +3,7 @@ import 'package:book_tracker_app/View/Screens/home_screen.dart';
 import 'package:book_tracker_app/View/Screens/library_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BottomNavigationWidget extends StatefulWidget {
   const BottomNavigationWidget({super.key});
@@ -20,15 +21,51 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   ];
 
   PreferredSizeWidget _buildAppBarTitle() {
-    switch(_currentIndex){
+    switch (_currentIndex) {
       case 0:
-        return AppBar(title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+        return AppBar(
+          title: Text(
+            "Home",
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.text,
+            ),
+          ),
+        );
       case 1:
-        return AppBar(title: Text("Add Book", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+        return AppBar(
+          title: Text(
+            "Add Book",
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.text,
+            ),
+          ),
+        );
       case 2:
-        return AppBar(title: Text("Collections", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+        return AppBar(
+          title: Text(
+            "Collections",
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.text,
+            ),
+          ),
+        );
       default:
-        return AppBar(title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+        return AppBar(
+          title: Text(
+            "Home",
+            style: GoogleFonts.roboto(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.text,
+            ),
+          ),
+        );
     }
   }
 

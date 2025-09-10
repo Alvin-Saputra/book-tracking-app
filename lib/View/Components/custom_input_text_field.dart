@@ -43,7 +43,7 @@ class CustomInputField extends StatelessWidget {
           style: GoogleFonts.roboto(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: AppColors.text,
           ),
         ),
         const SizedBox(height: 8.0), // Jarak antara label dan text field

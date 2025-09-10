@@ -40,7 +40,7 @@ class CustomDropdownField extends StatelessWidget {
           style: GoogleFonts.roboto(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: AppColors.text,
           ),
         ),
         const SizedBox(height: 8.0),
@@ -49,7 +49,10 @@ class CustomDropdownField extends StatelessWidget {
           items: items.map((String genre) {
             return DropdownMenuItem<String>(
               value: genre,
-              child: Text(genre),
+              child: Text(
+                genre,
+                style: GoogleFonts.roboto(fontSize: 16, color: AppColors.text),
+              ),
             );
           }).toList(),
           onChanged: onChanged,
