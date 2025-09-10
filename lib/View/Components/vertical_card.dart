@@ -1,22 +1,27 @@
 import 'dart:io';
 
 import 'package:book_tracker_app/Model/Local/book.dart';
-import 'package:book_tracker_app/View/Screens/update_book_screen.dart';
+import 'package:book_tracker_app/View/Screens/detail_book_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class VerticalCard extends StatelessWidget {
-  const VerticalCard({super.key, required this.book});
+class VerticalCard extends StatefulWidget {
+  VerticalCard({super.key, required this.book});
 
   final Book book;
 
+  @override
+  State<VerticalCard> createState() => _VerticalCardState();
+}
+
+class _VerticalCardState extends State<VerticalCard> {
   Widget _buildBookImage() {
     // Cek jika path adalah asset atau file dari penyimpanan
-    if (book.imageUrl.startsWith('assets/')) {
+    if (widget.book.imageUrl.startsWith('assets/')) {
       // Jika path dimulai dengan 'assets/', gunakan Image.asset
       return Image.asset(
-        book.imageUrl,
+        widget.book.imageUrl,
         height: 270,
         width: 175,
         fit: BoxFit.cover,
@@ -24,7 +29,7 @@ class VerticalCard extends StatelessWidget {
     } else {
       // Jika tidak, itu adalah file dari penyimpanan, gunakan Image.file
       return Image.file(
-        File(book.imageUrl),
+        File(widget.book.imageUrl),
         height: 270,
         width: 175,
         fit: BoxFit.cover,
@@ -40,10 +45,15 @@ class VerticalCard extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return UpdateBookScreen(book: book,);
+                return DetailBookScreen(book: widget.book,);
               },
             ),
-          );
+          ).then((value) {
+            // Refresh the task list after adding a new task
+            setState(() {
+             
+            });
+          });
       },
       child: SizedBox(
         // <-- Tambahkan SizedBox di sini
@@ -74,7 +84,7 @@ class VerticalCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            book.title,
+                            widget.book.title,
                             style: GoogleFonts.roboto(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -84,7 +94,7 @@ class VerticalCard extends StatelessWidget {
                             maxLines: 1, // Batasi jumlah baris
                           ),
                           Text(
-                            book.author,
+                            widget.book.author,
                             style: GoogleFonts.roboto(fontSize: 12),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,

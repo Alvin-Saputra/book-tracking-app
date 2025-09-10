@@ -82,7 +82,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   Future<int> _addTaskToDB(Map<String, dynamic> bookMap) async {
     var dao = BookDao();
-    int row = await dao.addTask(bookMap);
+    int row = await dao.addBook(bookMap);
     print("Row ID of inserted task: $row");
     return row; // Return the row ID of the inserted task
   }
@@ -93,28 +93,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 24.0, left: 16.0),
-                  child: Text(
-                    "Add Book",
-                    style: GoogleFonts.roboto(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            
             InkWell(
               onTap: pickFromGallery,
               borderRadius: BorderRadius.circular(24.0),
               child: Container(
                 margin: const EdgeInsets.only(top: 32.0),
-                height: 225,
+                height: 275,
                 width: 175,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
@@ -212,11 +196,26 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            // ✅ 2. KONVERSI STRING KE INT DENGAN AMAN
                             final totalPage =
                                 int.tryParse(controllerTotalPage.text) ?? 0;
                             final progress =
                                 int.tryParse(controllerProgress.text) ?? 0;
+
+                            String? insertedReadingStatus;
+
+                            switch (selectedReadingStatus) {
+                              case 'Not Started':
+                                insertedReadingStatus = 'not_started';
+                                break;
+
+                              case 'Started':
+                                insertedReadingStatus = 'started';
+                                break;
+
+                              case 'Finished':
+                                insertedReadingStatus = 'finished';
+                                break;
+                            }
 
                             Map<String, dynamic> bookMap = {
                               'title': controllerTitle.text,
@@ -224,7 +223,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               'genre': controllerGenre.text,
                               'total_page': totalPage,
                               'progress': progress,
-                              'reading_status': selectedReadingStatus!,
+                              'reading_status': insertedReadingStatus,
                               'added_at':
                                   "${DateTime.now().day.toString().padLeft(2, '0')}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().year}",
                               'image_url': croppedImage?.path.toString() ?? '',

@@ -18,9 +18,24 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     AddBookScreen(),
     LibraryScreen(),
   ];
+
+  PreferredSizeWidget _buildAppBarTitle() {
+    switch(_currentIndex){
+      case 0:
+        return AppBar(title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+      case 1:
+        return AppBar(title: Text("Add Book", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+      case 2:
+        return AppBar(title: Text("Collections", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+      default:
+        return AppBar(title: Text("Home", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _buildAppBarTitle(),
       extendBody: true,
       body: _screens[_currentIndex], // Tampilkan screen sesuai index
       bottomNavigationBar: Container(

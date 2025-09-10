@@ -25,6 +25,7 @@ class BookDao {
         genre: bookMaps[index]['author'],
         totalPage: bookMaps[index]['total_page'],
         readingStatus: bookMaps[index]['reading_status'],
+        progress: bookMaps[index]['progress'],
         addedAt: bookMaps[index]['added_at'],
         imageUrl: bookMaps[index]['image_url'],
       ),
@@ -56,6 +57,7 @@ class BookDao {
         genre: bookMaps[index]['author'],
         totalPage: bookMaps[index]['total_page'],
         readingStatus: bookMaps[index]['reading_status'],
+        progress: bookMaps[index]['progress'],
         addedAt: bookMaps[index]['added_at'],
         imageUrl: bookMaps[index]['image_url'],
       ),
@@ -78,6 +80,7 @@ class BookDao {
         genre: bookMaps[index]['author'],
         totalPage: bookMaps[index]['total_page'],
         readingStatus: bookMaps[index]['reading_status'],
+        progress: bookMaps[index]['progress'],
         addedAt: bookMaps[index]['added_at'],
         imageUrl: bookMaps[index]['image_url'],
       ),
@@ -86,7 +89,7 @@ class BookDao {
     return listBook;
   }
 
-  Future<int> addTask(Map<String, dynamic> bookMap) async {
+  Future<int> addBook(Map<String, dynamic> bookMap) async {
     final bookDB = await _db.database;
     return bookDB.insert(
       'books',
@@ -95,11 +98,21 @@ class BookDao {
     );
   }
 
-  Future<bool> updateTask(String bookId, Map<String, dynamic> bookMap) async {
+  Future<bool> updateBook(int bookId, Map<String, dynamic> bookMap) async {
     final bookDB = await _db.database;
     int rowsAffected = await bookDB.update(
       'books',
       bookMap,
+      where: 'id = ?',
+      whereArgs: [bookId],
+    );
+    return rowsAffected > 0;
+  }
+
+  Future<bool> deleteBook(int bookId) async {
+    final bookDB = await _db.database;
+    int rowsAffected = await bookDB.delete(
+      'books',
       where: 'id = ?',
       whereArgs: [bookId],
     );

@@ -41,19 +41,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
     
         return CustomScrollView(
           slivers: [
-            // ✅ Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 48.0, bottom: 8.0, left: 16.0),
-                child: Text(
-                  "Collections",
-                  style: GoogleFonts.roboto(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+            // // ✅ Header
+            // SliverToBoxAdapter(
+            //   child: Padding(
+            //     padding: const EdgeInsets.only(top: 48.0, bottom: 8.0, left: 16.0),
+            //     child: Text(
+            //       "Collections",
+            //       style: GoogleFonts.roboto(
+            //         fontSize: 28,
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //   ),
+            // ),
     
             // ✅ GridView jadi SliverGrid
             SliverPadding(

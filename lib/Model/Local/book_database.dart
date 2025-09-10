@@ -56,7 +56,7 @@ class BookDatabase {
         'author': item['author'],
         'genre': item['genre'],
         'total_page': item['total_page'],
-        'progress': 0,
+        'progress': item['progress']?? 0,
         'reading_status': item['reading_status'],
         'added_at': item['added_at'],
         'image_url': item['image_url'],

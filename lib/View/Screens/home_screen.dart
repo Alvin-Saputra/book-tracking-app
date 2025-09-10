@@ -48,27 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SafeArea(
           child: Column(
             children: [
+             
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 24.0, left: 12.0),
-                    child: Text(
-                      "Home",
-                      style: GoogleFonts.roboto(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
+                    padding: const EdgeInsets.only(left: 12.0, bottom: 4.0, top: 8.0),
                     child: Text(
                       "Recently Added",
                       style: GoogleFonts.roboto(
@@ -110,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0, left: 12.0),
+                    padding: const EdgeInsets.only(bottom: 4.0, left: 12.0),
                     child: Text(
                       "Currently Read",
                       style: GoogleFonts.roboto(

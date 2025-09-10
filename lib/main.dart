@@ -27,6 +27,10 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.secondary),
         scaffoldBackgroundColor: AppColors.primary,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.secondary,
+        ),
       ),
       home: BottomNavigationWidget(),
     );

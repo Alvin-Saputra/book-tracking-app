@@ -4,7 +4,7 @@
     "author": "F. Scott Fitzgerald",
     "genre": "Classic",
     "total_page": 50,
-    "reading_status": "started",
+    "reading_status": "finished",
     "added_at": "2023-10-01",
     "image_url": "assets/images/book_1.jpg"
   },
@@ -13,7 +13,7 @@
     "author": "Kentaro Miura",
     "genre": "Dystopian",
     "total_page": 328,
-    "reading_status": "started",
+    "reading_status": "not_started",
     "added_at": "2023-10-02",
     "image_url": "assets/images/book_2.jpg"
   },
@@ -22,7 +22,7 @@
     "author": "George Orwell",
     "genre": "Dystopian",
     "total_page": 328,
-    "reading_status": "not_started",
+    "reading_status": "finished",
     "added_at": "2023-10-02",
     "image_url": "assets/images/book_1.jpg"
   },
@@ -31,7 +31,7 @@
     "author": "Yandy Laurens",
     "genre": "Dystopian",
     "total_page": 328,
-    "reading_status": "not_started",
+    "reading_status": "started",
     "added_at": "2023-10-02",
     "progress": 100,
     "image_url": "assets/images/book_3.jpg"
@@ -41,7 +41,7 @@
     "author": "Hideo Kojima",
     "genre": "Dystopian",
     "total_page": 328,
-    "reading_status": "not_started",
+    "reading_status": "started",
     "added_at": "2023-10-02",
     "progress": 70,
     "image_url": "assets/images/book_4.jpg"
@@ -51,7 +51,7 @@
     "author": "F. Scott Fitzgerald",
     "genre": "Classic",
     "total_page": 180,
-    "reading_status": "started",
+    "reading_status": "not_started",
     "added_at": "2023-10-01",
     "image_url": "assets/images/book_1.jpg"
   }
