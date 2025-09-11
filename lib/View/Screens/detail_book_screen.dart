@@ -1,3 +1,4 @@
+import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/custom_drop_down_field.dart';
@@ -11,6 +12,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class DetailBookScreen extends StatefulWidget {
   const DetailBookScreen({super.key, required this.book});
@@ -109,17 +111,6 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
     });
   }
 
-  Future<bool> _updateBookDB(int bookId, Map<String, dynamic> bookMap) async {
-    var dao = BookDao();
-    var success = await dao.updateBook(bookId, bookMap);
-    return success;
-  }
-
-    Future<bool> _deleteBookDB(int bookId) async {
-    var dao = BookDao();
-    var success = await dao.deleteBook(bookId);
-    return success;
-  }
 
   DecorationImage _buildBookImage() {
     if (bookInfo.imageUrl.startsWith('assets/')) {
@@ -163,7 +154,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
 
     // Lanjutkan hanya jika pengguna menekan 'Delete'
     if (shouldDelete == true) {
-      bool isSuccess = await _deleteBookDB(bookInfo.id!);
+      bool isSuccess = await Provider.of<BookController>(context, listen: false).deleteBook(bookInfo.id!);
       
       if (mounted) {
         if (isSuccess) {
@@ -231,7 +222,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
                             ? "Please enter a title"
                             : null,
                         controller: controllerTitle,
-                        // ✅ Gunakan dekorasi kustom
+                        // ✅ Gunakan dekorasi 
                         label: 'Title',
                       ),
                       const SizedBox(height: 16.0), // Jarak antar field
@@ -332,10 +323,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
                                 'image_url': bookImage?.path.toString() ?? '',
                               };
 
-                              bool isSuccess = await _updateBookDB(
-                                bookInfo.id!,
-                                bookMap,
-                              );
+                              bool isSuccess = await Provider.of<BookController>(context, listen: false).updateBook(bookInfo.id!, bookMap);
 
                               if (isSuccess) {
                                 ScaffoldMessenger.of(context).showSnackBar(

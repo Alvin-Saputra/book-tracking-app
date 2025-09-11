@@ -1,3 +1,4 @@
+import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/custom_drop_down_field.dart';
 import 'package:book_tracker_app/View/Components/custom_input_text_field.dart';
@@ -10,6 +11,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({super.key});
@@ -79,12 +81,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     });
   }
 
-  Future<int> _addTaskToDB(Map<String, dynamic> bookMap) async {
-    var dao = BookDao();
-    int row = await dao.addBook(bookMap);
-    print("Row ID of inserted task: $row");
-    return row; // Return the row ID of the inserted task
-  }
+
 
   void clearForm() {
     setState(() {
@@ -239,7 +236,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               'image_url': croppedImage?.path.toString() ?? '',
                             };
 
-                            int row = await _addTaskToDB(bookMap);
+                            int row = await Provider.of<BookController>(context, listen: false).addBook(bookMap);
 
                             if (row > 0) {
                               ScaffoldMessenger.of(context).showSnackBar(

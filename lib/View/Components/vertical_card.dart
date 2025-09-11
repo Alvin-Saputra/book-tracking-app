@@ -9,11 +9,9 @@ class VerticalCard extends StatelessWidget {
   const VerticalCard({
     super.key,
     required this.book,
-    required this.onDataUpdated,
   });
 
   final Book book;
-  final VoidCallback onDataUpdated;
 
   Widget _buildBookImage() {
     if (book.imageUrl.startsWith('assets/')) {
@@ -44,9 +42,7 @@ class VerticalCard extends StatelessWidget {
               return DetailBookScreen(book: book);
             },
           ),
-        ).then((value) {
-            onDataUpdated(); 
-        });
+        );
       },
       child: SizedBox(
         width: 200,
@@ -103,11 +99,7 @@ class VerticalCard extends StatelessWidget {
                                 return DetailBookScreen(book: book);
                               },
                             ),
-                          ).then((value) {
-                            if (value == true) {
-                              onDataUpdated();
-                            }
-                          });
+                          );
                         },
                         style: IconButton.styleFrom(
                           backgroundColor: AppColors.secondary,

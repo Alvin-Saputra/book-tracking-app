@@ -1,8 +1,10 @@
+import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -12,79 +14,35 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-  late Future<List<Book>> listBookFuture;
-
-  Future<List<Book>> getAllBooksData() async {
-    var dao = BookDao();
-    return await dao.getAllBooks();
-  }
-
   @override
   void initState() {
     super.initState();
-    listBookFuture = getAllBooksData();
-  }
-
-  void _refreshData() {
-    setState(() {
-      listBookFuture = BookDao().getAllBooks();
-    });
+    Provider.of<BookController>(context, listen: false).fetchBooks();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Book>>(
-      future: listBookFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        }
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        List<Book> listBook = snapshot.data!;
-
-        return CustomScrollView(
-          slivers: [
-            // // ✅ Header
-            // SliverToBoxAdapter(
-            //   child: Padding(
-            //     padding: const EdgeInsets.only(top: 48.0, bottom: 8.0, left: 16.0),
-            //     child: Text(
-            //       "Collections",
-            //       style: GoogleFonts.roboto(
-            //         fontSize: 28,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-            // ✅ GridView jadi SliverGrid
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  Book book = listBook[index];
-                  return VerticalCard(book: book, onDataUpdated: _refreshData);
-                }, childCount: listBook.length),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 0,
-                  crossAxisSpacing: 0,
-                  mainAxisExtent: 360,
-                ),
-              ),
+    return Consumer<BookController>(
+      builder: (BuildContext context, controller, Widget? child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: GridView.builder(
+            padding: const EdgeInsets.only(
+              top: 0.0,
+              bottom: kBottomNavigationBarHeight + 10,
             ),
-
-            // ✅ Tambahkan SliverToBoxAdapter untuk memberi ruang bawah
-            const SliverToBoxAdapter(
-              child: SizedBox(
-                height: kBottomNavigationBarHeight + 10,
-              ), // tinggi kira-kira setara dengan navbar
+            itemCount: controller.books.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 0,
+              crossAxisSpacing: 0,
+              mainAxisExtent: 360,
             ),
-          ],
+            itemBuilder: (context, index) {
+              Book book = controller.books[index];
+              return VerticalCard(book: book);
+            },
+          ),
         );
       },
     );

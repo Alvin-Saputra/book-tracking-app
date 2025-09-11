@@ -7,10 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HorizontalCard extends StatelessWidget {
-  const HorizontalCard({super.key, required this.book, required this.onDataUpdated});
+  const HorizontalCard({super.key, required this.book});
 
   final Book book;
-  final VoidCallback onDataUpdated;
   Widget _buildBookImage() {
     // Cek jika path adalah asset atau file dari penyimpanan
     if (book.imageUrl.startsWith('assets/')) {
@@ -43,9 +42,7 @@ class HorizontalCard extends StatelessWidget {
               return DetailBookScreen(book: book);
             },
           ),
-        ).then((value) {
-          onDataUpdated();
-        });
+        );
       },
       child: Card(
         color: AppColors.primary,
