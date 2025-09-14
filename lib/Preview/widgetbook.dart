@@ -3,6 +3,7 @@ import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/View/Components/horizontal_card.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
 import 'package:book_tracker_app/View/Screens/add_book_screen.dart';
+import 'package:book_tracker_app/View/Screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 
@@ -50,6 +51,11 @@ class HotReload extends StatelessWidget {
             WidgetbookUseCase(
               name: 'Add Book Screen',
               builder: (context) => Center(child: AddBookScreen()),
+            ),
+
+            WidgetbookUseCase(
+              name: 'Registration Screen',
+              builder: (context) => Center(child: RegistrationScreen()),
             ),
           ],
         ),

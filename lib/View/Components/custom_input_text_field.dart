@@ -7,12 +7,14 @@ class CustomInputField extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
+  final bool isPassword; 
 
   const CustomInputField({
     required this.label,
     required this.controller,
     this.validator,
     this.keyboardType,
+    this.isPassword = false,
   });
 
   @override
@@ -52,6 +54,7 @@ class CustomInputField extends StatelessWidget {
           validator: validator,
           keyboardType: keyboardType,
           decoration: inputDecoration,
+          obscureText: isPassword,
         ),
       ],
     );

@@ -244,7 +244,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                   content: Text('Book Added Successfully'),
                                 ),
                               );
-                              clearForm();
+                              
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

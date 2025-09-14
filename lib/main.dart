@@ -1,11 +1,14 @@
 import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/bottom_navigation_widget.dart';
+import 'package:book_tracker_app/View/Screens/registration_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -40,7 +43,7 @@ class _MyAppState extends State<MyApp> {
             foregroundColor: AppColors.secondary,
           ),
         ),
-        home: BottomNavigationWidget(),
+        home: RegistrationScreen(),
       ),
     );
   }
