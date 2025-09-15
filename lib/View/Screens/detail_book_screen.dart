@@ -154,7 +154,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
 
     // Lanjutkan hanya jika pengguna menekan 'Delete'
     if (shouldDelete == true) {
-      bool isSuccess = await Provider.of<BookController>(context, listen: false).deleteBook(bookInfo.id!);
+      bool isSuccess = await Provider.of<BookController>(context, listen: false).deleteBook(bookInfo.id!); 
       
       if (mounted) {
         if (isSuccess) {

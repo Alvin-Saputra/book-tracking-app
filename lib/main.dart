@@ -1,6 +1,8 @@
 import 'package:book_tracker_app/Controller/book_controller.dart';
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/bottom_navigation_widget.dart';
+import 'package:book_tracker_app/View/Screens/login_screen.dart';
 import 'package:book_tracker_app/View/Screens/registration_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,13 @@ class _MyAppState extends State<MyApp> {
           create: (BuildContext context) {
             return BookController(bookDao);
           },
-        ),],
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) {
+            return UserController();
+          },
+        ),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -43,10 +51,19 @@ class _MyAppState extends State<MyApp> {
             foregroundColor: AppColors.secondary,
           ),
         ),
-        home: RegistrationScreen(),
+        home: Consumer<UserController>(
+          builder:
+              (BuildContext context, UserController controller, Widget? child) {
+                if (controller.initializing) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (controller.user.email.isEmpty || controller.user.email == "") {
+                  return LoginScreen();
+                } else {
+                  return BottomNavigationWidget();
+                }
+              },
+        ),
       ),
     );
   }
 }
-
-

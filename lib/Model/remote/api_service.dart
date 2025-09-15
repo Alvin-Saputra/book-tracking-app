@@ -20,10 +20,10 @@ Future<String> registrationService(Map<dynamic, dynamic> signUpData) async {
   }
 }
 
-Future<String> loginService(Map<dynamic, dynamic> loginData) async {
+Future<Map<String, dynamic>> loginService(Map<String, dynamic> loginData) async {
   final apiKey = dotenv.env['API_KEY'] ?? 'NO_KEY_FOUND';
-  // Buat multipart request
-  var response = await http.post(
+
+  final response = await http.post(
     Uri.parse(
       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$apiKey',
     ),
@@ -31,9 +31,29 @@ Future<String> loginService(Map<dynamic, dynamic> loginData) async {
     headers: {'Content-Type': 'application/json'},
   );
 
-  if (response.statusCode == 200) {
-    return 'success';
-  } else {
-    return 'failed';
+  final responseData = jsonDecode(response.body);
+
+  // Cek jika status code bukan 200
+  if (response.statusCode != 200) {
+    String errorMessage = 'Some error occurred, please try again later';
+
+    if (responseData['error'] != null) {
+      switch (responseData['error']['message']) {
+        case 'EMAIL_NOT_FOUND':
+          errorMessage = 'Email is not registered';
+          break;
+        case 'INVALID_PASSWORD':
+          errorMessage = 'Invalid password';
+          break;
+        case 'USER_DISABLED':
+          errorMessage = 'This account has been disabled';
+          break;
+      }
+    }
+
+    throw Exception(errorMessage);
   }
+
+  // Jika sukses, return data
+  return responseData as Map<String, dynamic>;
 }

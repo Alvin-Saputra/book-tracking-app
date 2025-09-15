@@ -1,3 +1,4 @@
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/remote/api_service.dart';
 import 'package:book_tracker_app/View/Components/bottom_navigation_widget.dart';
 import 'package:book_tracker_app/View/Components/custom_input_text_field.dart';
@@ -6,14 +7,28 @@ import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool isLoading = false; 
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,81 +84,100 @@ class LoginScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomInputField(
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? "Enter Your Email"
-                            : null,
+                        validator: (value) =>
+                            (value == null || value.isEmpty)
+                                ? "Enter Your Email"
+                                : null,
                         controller: emailController,
-                        // ✅ Gunakan dekorasi kustom
                         label: 'Email',
                       ),
-                      const SizedBox(height: 16.0), // Jarak antar field
+                      const SizedBox(height: 16.0),
                       CustomInputField(
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? "Enter Your Password"
-                            : null,
+                        validator: (value) =>
+                            (value == null || value.isEmpty)
+                                ? "Enter Your Password"
+                                : null,
                         controller: passwordController,
-                        // ✅ Gunakan dekorasi kustom
                         label: 'Password',
                         isPassword: true,
                       ),
-
                       const SizedBox(height: 32.0),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              Map dataToSend = {
-                                'email': emailController.text,
-                                'password': passwordController.text,
-                                'returnSecureToken': true,
-                              };
+                        child: (isLoading)
+                            ? Center(child: CircularProgressIndicator()) 
+                            : ElevatedButton(
+                                onPressed: () async {
+                                  if (formKey.currentState!.validate()) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
 
-                              try {
-                                final response = await loginService(dataToSend);
-                                if (response == 'success') {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("signup success"),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return BottomNavigationWidget();
-                                      },
-                                    ),
-                                  );
-                                }
-                              } catch (error) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("error"),
-                                    duration: Duration(seconds: 2),
+                                    Map<String, dynamic> dataToSend = {
+                                      'email': emailController.text,
+                                      'password': passwordController.text,
+                                      'returnSecureToken': true,
+                                    };
+
+                                    try {
+                                      final responseData = await loginService(
+                                        dataToSend,
+                                      );
+
+                                      print("responseData = $responseData");
+
+                                      bool isSuccess = await Provider.of<UserController>(
+                                        context,
+                                        listen: false,
+                                      ).storeUserData(responseData);
+
+                                      if (isSuccess && mounted) { // 'mounted' check is good practice
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                BottomNavigationWidget(),
+                                          ),
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      }
+                                    } catch (error) {
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text("Error: ${error.toString()}"),
+                                            duration: Duration(seconds: 3),
+                                          ),
+                                        );
+                                      }
+                                    } finally {
+                                      if(mounted) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      }
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: AppColors.secondary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
                                   ),
-                                );
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: AppColors.secondary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
-                          ),
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                       ),
                     ],
                   ),
@@ -160,10 +194,10 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Divider(
-                color: Colors.grey.shade400, // warna garis
-                thickness: 1, // ketebalan
-                indent: 32, // jarak dari kiri
-                endIndent: 32, // jarak dari kanan
+                color: Colors.grey.shade400,
+                thickness: 1,
+                indent: 32,
+                endIndent: 32,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
@@ -174,14 +208,14 @@ class LoginScreen extends StatelessWidget {
                       icon: FaIcon(
                         FontAwesomeIcons.google,
                         size: 28,
-                      ), // Set size here
+                      ),
                       onPressed: () {},
                     ),
                     IconButton(
                       icon: FaIcon(
                         FontAwesomeIcons.facebook,
                         size: 28,
-                      ), // Set size here
+                      ),
                       onPressed: () {},
                     ),
                   ],
@@ -204,7 +238,7 @@ class LoginScreen extends StatelessWidget {
                     fontSize: 14.0,
                     fontWeight: FontWeight.w400,
                     color: AppColors.text,
-                  ), // optional styling // optional styling
+                  ),
                 ),
               ),
             ],

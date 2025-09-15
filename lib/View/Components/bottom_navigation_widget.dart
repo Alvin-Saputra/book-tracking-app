@@ -1,9 +1,12 @@
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/View/Screens/add_book_screen.dart';
 import 'package:book_tracker_app/View/Screens/home_screen.dart';
 import 'package:book_tracker_app/View/Screens/library_screen.dart';
+import 'package:book_tracker_app/View/Screens/login_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavigationWidget extends StatefulWidget {
   const BottomNavigationWidget({super.key});
@@ -72,6 +75,40 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: Consumer<UserController>(
+          builder:
+              (BuildContext context, UserController controller, Widget? child) {
+                return ListView(
+                  children: [
+                    DrawerHeader(child: Text(controller.user.email)),
+                    ListTile(
+                      onTap: () async {
+                        bool dataCleared = await controller.clearData();
+                        if (dataCleared) {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return LoginScreen();
+                              },
+                            ),
+                            (route) => false,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Failed to log out")),
+                          );
+                        }
+                      },
+                      title: Text("Logout"),
+                      leading: Icon(Icons.logout),
+                    ),
+                  ],
+                );
+              },
+        ),
+      ),
       appBar: _buildAppBarTitle(),
       extendBody: true,
       body: _screens[_currentIndex], // Tampilkan screen sesuai index
