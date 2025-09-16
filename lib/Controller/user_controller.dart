@@ -1,4 +1,5 @@
 import 'package:book_tracker_app/Model/Local/user.dart';
+import 'package:book_tracker_app/Model/remote/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/Local/book.dart';
@@ -7,6 +8,9 @@ import '../Model/Local/book_dao.dart';
 class UserController with ChangeNotifier {
   late User _user;
   User get user => _user;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   late SharedPreferences _preferences;
   bool initializing = false;
@@ -42,18 +46,10 @@ class UserController with ChangeNotifier {
       refreshToken: refreshToken,
       expiresIn: expiresIn,
     );
-    print("=== Fetch User Data from SharedPreferences ===");
-    print("Email: $email");
-    print("LocalId: $userId");
-    print("IdToken: $idToken");
-    print("RefreshToken: $refreshToken");
-    print("ExpiresIn: $expiresIn");
-    print("=============================================");
-
     notifyListeners();
   }
 
-  Future<bool> storeUserData(Map data) async {
+  Future<void> storeUserData(Map data) async {
     await _preferences.setString(keyIdToken, data[keyIdToken]);
     await _preferences.setString(keyEmail, data[keyEmail]);
     await _preferences.setString(keyrRefreshToken, data[keyrRefreshToken]);
@@ -62,14 +58,64 @@ class UserController with ChangeNotifier {
 
     fetchUserData();
     notifyListeners();
-    return true;
   }
 
   Future<bool> clearData() async {
-    await _preferences.clear();
-    fetchUserData();
+    bool isSuccess = await _preferences.clear();
+    if (isSuccess) {
+      fetchUserData();
+      notifyListeners();
+      return isSuccess;
+    } else {
+      return false;
+    }
+  }
 
+  Future<bool> loginUser(String email, String password) async {
+    _isLoading = true;
     notifyListeners();
-    return true;
+    try {
+      Map<String, dynamic> dataToSend = {
+        'email': email,
+        'password': password,
+        'returnSecureToken': true,
+      };
+
+      final responseData = await loginService(dataToSend);
+      await storeUserData(responseData);
+
+      _isLoading = false;
+      notifyListeners();
+      return true; // <-- Kembalikan true saat sukses
+    } catch (error) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<bool> registrationUser(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      Map<String, dynamic> dataToSend = {
+        'email': email,
+        'password': password,
+        'returnSecureToken': true,
+      };
+
+      final responseData = await registrationService(dataToSend);
+      if (responseData.isNotEmpty) {
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
   }
 }

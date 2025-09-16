@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-Future<String> registrationService(Map<dynamic, dynamic> signUpData) async {
+Future<Map<String, dynamic>> registrationService(Map<dynamic, dynamic> signUpData) async {
   final apiKey = dotenv.env['API_KEY'] ?? 'NO_KEY_FOUND';
   var response = await http.post(
     Uri.parse(
@@ -12,12 +12,36 @@ Future<String> registrationService(Map<dynamic, dynamic> signUpData) async {
     body: jsonEncode(signUpData),
     headers: {'Content-Type': 'application/json'},
   );
+  final responseData = jsonDecode(response.body);
 
-  if (response.statusCode == 200) {
-    return 'success';
-  } else {
-    return 'failed';
+   if (response.statusCode != 200) {
+    String errorMessage = 'Some error occurred, please try again later';
+
+    if (responseData['error'] != null) {
+      switch (responseData['error']['message']) {
+        case 'EMAIL_NOT_FOUND':
+          errorMessage = 'Email Is Not Registered';
+          break;
+        case 'INVALID_PASSWORD':
+          errorMessage = 'Invalid Password';
+          break;
+         case 'INVALID_EMAIL':
+          errorMessage = 'Invalid Email Format';
+          break;
+         case 'INVALID_LOGIN_CREDENTIALS':
+          errorMessage = 'Invalid Login Credentials';
+          break;
+        case 'USER_DISABLED':
+          errorMessage = 'This Account Has Been Disabled';
+          break;
+      }
+    }
+
+    throw Exception(errorMessage);
   }
+
+  // Jika sukses, return data
+  return responseData as Map<String, dynamic>;
 }
 
 Future<Map<String, dynamic>> loginService(Map<String, dynamic> loginData) async {
@@ -40,13 +64,19 @@ Future<Map<String, dynamic>> loginService(Map<String, dynamic> loginData) async 
     if (responseData['error'] != null) {
       switch (responseData['error']['message']) {
         case 'EMAIL_NOT_FOUND':
-          errorMessage = 'Email is not registered';
+          errorMessage = 'Email Is Not Registered';
           break;
         case 'INVALID_PASSWORD':
-          errorMessage = 'Invalid password';
+          errorMessage = 'Invalid Password';
+          break;
+         case 'INVALID_EMAIL':
+          errorMessage = 'Invalid Email Format';
+          break;
+         case 'INVALID_LOGIN_CREDENTIALS':
+          errorMessage = 'Invalid Login Credentials';
           break;
         case 'USER_DISABLED':
-          errorMessage = 'This account has been disabled';
+          errorMessage = 'This Account Has Been Disabled';
           break;
       }
     }

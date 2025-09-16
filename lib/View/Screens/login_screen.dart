@@ -21,7 +21,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  bool isLoading = false; 
 
   @override
   void dispose() {
@@ -84,100 +83,97 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       CustomInputField(
-                        validator: (value) =>
-                            (value == null || value.isEmpty)
-                                ? "Enter Your Email"
-                                : null,
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? "Enter Your Email"
+                            : null,
                         controller: emailController,
                         label: 'Email',
                       ),
                       const SizedBox(height: 16.0),
                       CustomInputField(
-                        validator: (value) =>
-                            (value == null || value.isEmpty)
-                                ? "Enter Your Password"
-                                : null,
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? "Enter Your Password"
+                            : null,
                         controller: passwordController,
                         label: 'Password',
                         isPassword: true,
                       ),
                       const SizedBox(height: 32.0),
-                      SizedBox(
-                        width: double.infinity,
-                        child: (isLoading)
-                            ? Center(child: CircularProgressIndicator()) 
-                            : ElevatedButton(
-                                onPressed: () async {
-                                  if (formKey.currentState!.validate()) {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
 
-                                    Map<String, dynamic> dataToSend = {
-                                      'email': emailController.text,
-                                      'password': passwordController.text,
-                                      'returnSecureToken': true,
-                                    };
+                      Consumer<UserController>(
+                        builder:
+                            (
+                              BuildContext context,
+                              UserController controller,
+                              Widget? child,
+                            ) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: (controller.isLoading)
+                                    ? Center(child: CircularProgressIndicator())
+                                    : ElevatedButton(
+                                        onPressed: () async {
+                                          if (formKey.currentState!
+                                              .validate()) {
+                                            try {
+                                              bool isSuccess = await controller
+                                                  .loginUser(
+                                                    emailController.text,
+                                                    passwordController.text,
+                                                  );
 
-                                    try {
-                                      final responseData = await loginService(
-                                        dataToSend,
-                                      );
-
-                                      print("responseData = $responseData");
-
-                                      bool isSuccess = await Provider.of<UserController>(
-                                        context,
-                                        listen: false,
-                                      ).storeUserData(responseData);
-
-                                      if (isSuccess && mounted) { // 'mounted' check is good practice
-                                        Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                BottomNavigationWidget(),
+                                              if (isSuccess && mounted) {
+                                                Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BottomNavigationWidget(),
+                                                  ),
+                                                  (Route<dynamic> route) =>
+                                                      false,
+                                                );
+                                              }
+                                            } catch (error) {
+                                              if (mounted) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      "${error.toString().replaceFirst('Exception: ', '')}",
+                                                    ),
+                                                    duration: Duration(
+                                                      seconds: 3,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: AppColors.secondary,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
                                           ),
-                                          (Route<dynamic> route) => false,
-                                        );
-                                      }
-                                    } catch (error) {
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text("Error: ${error.toString()}"),
-                                            duration: Duration(seconds: 3),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              32.0,
+                                            ),
                                           ),
-                                        );
-                                      }
-                                    } finally {
-                                      if(mounted) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                      }
-                                    }
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: AppColors.secondary,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32.0),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                                        ),
+                                        child: const Text(
+                                          "Login",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                              );
+                            },
                       ),
                     ],
                   ),
@@ -205,17 +201,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.google,
-                        size: 28,
-                      ),
+                      icon: FaIcon(FontAwesomeIcons.google, size: 28),
                       onPressed: () {},
                     ),
                     IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.facebook,
-                        size: 28,
-                      ),
+                      icon: FaIcon(FontAwesomeIcons.facebook, size: 28),
                       onPressed: () {},
                     ),
                   ],

@@ -1,3 +1,4 @@
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/remote/api_service.dart';
 import 'package:book_tracker_app/View/Components/custom_input_text_field.dart';
 import 'package:book_tracker_app/View/Screens/login_screen.dart';
@@ -5,12 +6,20 @@ import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
-class RegistrationScreen extends StatelessWidget {
+class RegistrationScreen extends StatefulWidget {
   RegistrationScreen({super.key});
 
+  @override
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
+}
+
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -86,64 +95,88 @@ class RegistrationScreen extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 32.0),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              Map dataToSend = {
-                                'email': emailController.text,
-                                'password': passwordController.text,
-                                'returnSecureToken': true,
-                              };
-
-                              try {
-                                final response = await registrationService(
-                                  dataToSend,
-                                );
-                                if (response == 'success') {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("signup success"),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return LoginScreen();
-                                      },
-                                    ),
-                                  );
-                                }
-                              } catch (error) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("error"),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: AppColors.secondary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
-                          ),
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                      Consumer<UserController>(
+                        builder:
+                            (
+                              BuildContext context,
+                              UserController controller,
+                              Widget? child,
+                            ) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: (controller.isLoading)
+                                    ? Center(child: CircularProgressIndicator())
+                                    : ElevatedButton(
+                                        onPressed: () async {
+                                          if (formKey.currentState!
+                                              .validate()) {
+                                            try {
+                                              final response = await controller
+                                                  .registrationUser(
+                                                    emailController.text,
+                                                    passwordController.text,
+                                                  );
+                                              if (response == true) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      "Succesfully Signup",
+                                                    ),
+                                                    duration: Duration(
+                                                      seconds: 2,
+                                                    ),
+                                                  ),
+                                                );
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) {
+                                                      return LoginScreen();
+                                                    },
+                                                  ),
+                                                );
+                                              }
+                                            } catch (error) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    "${error.toString().replaceFirst('Exception: ', '')}",
+                                                  ),
+                                                  duration: Duration(
+                                                    seconds: 2,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: AppColors.secondary,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              32.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Sign Up",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                              );
+                            },
                       ),
                     ],
                   ),
