@@ -51,6 +51,7 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_dotenv: ^6.0.0
   carousel_slider: ^5.1.1
+  lottie: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -66,7 +67,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/icon.png"
+  image_path: "assets/icon/icon_outline.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -84,6 +85,7 @@ flutter:
     - assets/images/
     - assets/icon/
     - assets/data/
+    - assets/animation/
     - .env
   #   - images/a_dot_ham.jpeg
 

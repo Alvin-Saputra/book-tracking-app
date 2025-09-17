@@ -18,10 +18,16 @@ class BottomNavigationWidget extends StatefulWidget {
 class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   int _currentIndex = 0;
   late final List<Widget> _screens = [
-    HomeScreen(),
+    HomeScreen(onNavigateToAddBook: _goToAddBook),
     AddBookScreen(),
-    LibraryScreen(),
+    LibraryScreen(onNavigateToAddBook: _goToAddBook),
   ];
+
+  void _goToAddBook() {
+    setState(() {
+      _currentIndex = 1; 
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +66,6 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
                     onSelected: (String result) async {
                       if (result == 'logout') {
                         await controller.clearData();
-                        // Navigator.of(context).pushAndRemoveUntil(
-                        //   MaterialPageRoute(
-                        //     builder: (context) => LoginScreen(),
-                        //   ),
-                        //   (Route<dynamic> route) => false,
-                        // );
                       }
                     },
                     itemBuilder: (BuildContext context) =>

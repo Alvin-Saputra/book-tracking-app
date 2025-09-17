@@ -3,15 +3,19 @@ import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/carousel_widget.dart';
+import 'package:book_tracker_app/View/Components/carousel_widget_2.dart';
 import 'package:book_tracker_app/View/Components/horizontal_card.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  HomeScreen({super.key, this.onNavigateToAddBook});
+
+  final VoidCallback? onNavigateToAddBook;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -48,18 +52,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  left: 12.0,
-                                  bottom: 4.0,
-                                  top: 8.0,
+                                  // left: 12.0,
+                                  bottom: 12.0,
+                                  top: 32.0,
                                 ),
                                 child: Text(
                                   "Recently Added",
                                   style: GoogleFonts.roboto(
-                                    fontSize: 18,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.text,
                                   ),
@@ -67,21 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-
-                          SizedBox(
-                            height: 354,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: controller.recentlyAddedBooks.length,
-                              itemBuilder: (context, index) {
-                                Book book =
-                                    controller.recentlyAddedBooks[index];
-                                return VerticalCard(book: book);
-                              },
-                              separatorBuilder: (context, index) {
-                                return Divider();
-                              },
-                            ),
+                          CarouselWidget(
+                            book: controller.books,
+                            enlargeCenterPage: true,
+                            carouselHeight: 480,
+                            imageHeight: 375,
+                            imageWidth: 225,
+                            viewportFraction: 0.65, 
+                            enlargeFactor: 0.15,
                           ),
                           SizedBox(height: 12.0),
                           Row(
@@ -128,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 padding: const EdgeInsets.only(
                                   // left: 12.0,
                                   bottom: 32.0,
-                                  top: 48.0,
+                                  top: 32.0,
                                 ),
                                 child: Text(
                                   "Recently Added",
@@ -141,7 +138,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          CarouselWidget(book: controller.books, enlargeCenterPage: true, carouselHeight: 600, imageHeight: 400, imageWidth: 225, viewportFraction: 0.6,),
+                          CarouselWidget(
+                            book: controller.books,
+                            enlargeCenterPage: true,
+                            carouselHeight: 575,
+                            imageHeight: 400,
+                            imageWidth: 225,
+                            viewportFraction: 0.6, enlargeFactor: 0.3,
+                          ),
                         ],
                       );
                     } else if (hasCurrentlyReadBooks) {
@@ -152,8 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  bottom: 4.0,
                                   left: 12.0,
+                                  bottom: 4.0,
+                                  top: 8.0,
                                 ),
                                 child: Text(
                                   "Currently Read",
@@ -182,7 +187,45 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       );
                     } else {
-                      return Center(child: Text("No Book Added"));
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: ClipRect(
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  widthFactor: 0.65, // ambil 50% lebar animasi
+                                  heightFactor:
+                                      0.65, // ambil 50% tinggi animasi
+                                  child: Lottie.asset(
+                                    'assets/animation/Book.json',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Center(child: Text("No Book Added")),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  widget.onNavigateToAddBook!();
+                                },
+                                child: Text("Add Your First Book"),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: AppColors.secondary,
+                                  foregroundColor: Colors.white,
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
                     }
                   }
                 },

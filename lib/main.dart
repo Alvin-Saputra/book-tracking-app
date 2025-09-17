@@ -2,6 +2,7 @@ import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/bottom_navigation_widget.dart';
+import 'package:book_tracker_app/View/Screens/loading_screen.dart';
 import 'package:book_tracker_app/View/Screens/login_screen.dart';
 import 'package:book_tracker_app/View/Screens/registration_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
@@ -55,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           builder:
               (BuildContext context, UserController controller, Widget? child) {
                 if (controller.initializing) {
-                  return Center(child: CircularProgressIndicator());
+                  return LoadingScreen();
                 } else if (controller.user.email.isEmpty || controller.user.email == "") {
                   return LoginScreen();
                 } else {

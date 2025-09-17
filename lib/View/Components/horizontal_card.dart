@@ -96,7 +96,7 @@ class HorizontalCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          "${(book.progress! / book.totalPage * 100).toStringAsFixed(1)} %",
+                          "${(book.progress! / book.totalPage * 100).toStringAsFixed(0)} %",
                           style: GoogleFonts.roboto(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

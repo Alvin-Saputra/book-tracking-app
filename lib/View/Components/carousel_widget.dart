@@ -15,7 +15,8 @@ class CarouselWidget extends StatelessWidget {
     required this.carouselHeight,
     required this.imageHeight,
     required this.imageWidth,
-    required this.viewportFraction,
+    required this.viewportFraction, required this.enlargeFactor,
+
   });
 
   final List<Book> book;
@@ -24,6 +25,7 @@ class CarouselWidget extends StatelessWidget {
   final double imageHeight;
   final double imageWidth;
   final double viewportFraction;
+  final double enlargeFactor;
 
   Widget _buildBookImage(Book book) {
     if (book.imageUrl.startsWith('assets/')) {
@@ -49,6 +51,7 @@ class CarouselWidget extends StatelessWidget {
         autoPlayAnimationDuration: const Duration(milliseconds: 800),
         autoPlayCurve: Curves.fastOutSlowIn,
         enlargeCenterPage: enlargeCenterPage,
+        enlargeFactor: enlargeFactor,
         viewportFraction: viewportFraction,
         enableInfiniteScroll: true,
         scrollDirection: Axis.horizontal,
