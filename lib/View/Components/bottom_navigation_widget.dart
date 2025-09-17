@@ -75,40 +75,40 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Consumer<UserController>(
-          builder:
-              (BuildContext context, UserController controller, Widget? child) {
-                return ListView(
-                  children: [
-                    DrawerHeader(child: Text(controller.user.email)),
-                    ListTile(
-                      onTap: () async {
-                        bool dataCleared = await controller.clearData();
-                        if (dataCleared) {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return LoginScreen();
-                              },
-                            ),
-                            (route) => false,
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Failed to log out")),
-                          );
-                        }
-                      },
-                      title: Text("Logout"),
-                      leading: Icon(Icons.logout),
-                    ),
-                  ],
-                );
-              },
-        ),
-      ),
+      // drawer: Drawer(
+      //   child: Consumer<UserController>(
+      //     builder:
+      //         (BuildContext context, UserController controller, Widget? child) {
+      //           return ListView(
+      //             children: [
+      //               DrawerHeader(child: Text(controller.user.email)),
+      //               ListTile(
+      //                 onTap: () async {
+      //                   bool dataCleared = await controller.clearData();
+      //                   if (dataCleared) {
+      //                     Navigator.pushAndRemoveUntil(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (context) {
+      //                           return LoginScreen();
+      //                         },
+      //                       ),
+      //                       (route) => false,
+      //                     );
+      //                   } else {
+      //                     ScaffoldMessenger.of(context).showSnackBar(
+      //                       SnackBar(content: Text("Failed to log out")),
+      //                     );
+      //                   }
+      //                 },
+      //                 title: Text("Logout"),
+      //                 leading: Icon(Icons.logout),
+      //               ),
+      //             ],
+      //           );
+      //         },
+      //   ),
+      // ),
       appBar: _buildAppBarTitle(),
       extendBody: true,
       body: _screens[_currentIndex], // Tampilkan screen sesuai index

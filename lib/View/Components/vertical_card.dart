@@ -81,7 +81,7 @@ class VerticalCard extends StatelessWidget {
                             book.author,
                             style: GoogleFonts.roboto(fontSize: 12, color: AppColors.text),
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                            maxLines: 1,
                           ),
                         ],
                       ),
