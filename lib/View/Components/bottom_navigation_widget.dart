@@ -23,101 +23,87 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     LibraryScreen(),
   ];
 
-  PreferredSizeWidget _buildAppBarTitle() {
-    switch (_currentIndex) {
-      case 0:
-        return AppBar(
-          title: Text(
-            "Home",
-            style: GoogleFonts.roboto(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.text,
-            ),
-          ),
-        );
-      case 1:
-        return AppBar(
-          title: Text(
-            "Add Book",
-            style: GoogleFonts.roboto(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.text,
-            ),
-          ),
-        );
-      case 2:
-        return AppBar(
-          title: Text(
-            "Collections",
-            style: GoogleFonts.roboto(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.text,
-            ),
-          ),
-        );
-      default:
-        return AppBar(
-          title: Text(
-            "Home",
-            style: GoogleFonts.roboto(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.text,
-            ),
-          ),
-        );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    String appBarTitle;
+    switch (_currentIndex) {
+      case 0:
+        appBarTitle = "Home";
+        break;
+      case 1:
+        appBarTitle = "Add Book";
+        break;
+      case 2:
+        appBarTitle = "Collections";
+        break;
+      default:
+        appBarTitle = "Book Tracker";
+        break;
+    }
+
     return Scaffold(
-      // drawer: Drawer(
-      //   child: Consumer<UserController>(
-      //     builder:
-      //         (BuildContext context, UserController controller, Widget? child) {
-      //           return ListView(
-      //             children: [
-      //               DrawerHeader(child: Text(controller.user.email)),
-      //               ListTile(
-      //                 onTap: () async {
-      //                   bool dataCleared = await controller.clearData();
-      //                   if (dataCleared) {
-      //                     Navigator.pushAndRemoveUntil(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (context) {
-      //                           return LoginScreen();
-      //                         },
-      //                       ),
-      //                       (route) => false,
-      //                     );
-      //                   } else {
-      //                     ScaffoldMessenger.of(context).showSnackBar(
-      //                       SnackBar(content: Text("Failed to log out")),
-      //                     );
-      //                   }
-      //                 },
-      //                 title: Text("Logout"),
-      //                 leading: Icon(Icons.logout),
-      //               ),
-      //             ],
-      //           );
-      //         },
-      //   ),
-      // ),
-      appBar: _buildAppBarTitle(),
+      appBar: AppBar(
+        title: Text(
+          appBarTitle,
+          style: GoogleFonts.roboto(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: AppColors.text,
+          ),
+        ),
+        actions: <Widget>[
+          Consumer<UserController>(
+            builder:
+                (BuildContext context, UserController controller, Widget? child) {
+                  return PopupMenuButton<String>(
+                     icon: CircleAvatar(child: const Icon(Icons.person, color: AppColors.secondary), backgroundColor: AppColors.quaternary,),
+                    onSelected: (String result) async {
+                      if (result == 'logout') {
+                        await controller.clearData();
+                        // Navigator.of(context).pushAndRemoveUntil(
+                        //   MaterialPageRoute(
+                        //     builder: (context) => LoginScreen(),
+                        //   ),
+                        //   (Route<dynamic> route) => false,
+                        // );
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: 'email',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.email_outlined, color: AppColors.secondary),
+                                const SizedBox(width: 8),
+                                Text(controller.user.email),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'logout',
+                            child: Row(
+                              children: [
+                                Icon(Icons.logout, color: AppColors.secondary),
+                                SizedBox(width: 8),
+                                Text('Logout'),
+                              ],
+                            ),
+                          ),
+                        ],
+                  );
+                },
+          ),
+        ],
+      ),
       extendBody: true,
-      body: _screens[_currentIndex], // Tampilkan screen sesuai index
+      body: _screens[_currentIndex], // tampilkan screen sesuai index
       bottomNavigationBar: Container(
-        margin: EdgeInsets.only(left: 72, right: 72, bottom: 20),
+        margin: const EdgeInsets.only(left: 72, right: 72, bottom: 20),
         decoration: BoxDecoration(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(25),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black26,
               blurRadius: 10,
@@ -138,8 +124,8 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
             elevation: 0,
             selectedItemColor: AppColors.secondary,
             unselectedItemColor: Colors.grey,
-            showSelectedLabels: false, // Sembunyikan label item terpilih
-            showUnselectedLabels: false, // Sembunyikan label item lainnya
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
               BottomNavigationBarItem(icon: Icon(Icons.add_box), label: ''),
