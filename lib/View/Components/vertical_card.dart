@@ -22,8 +22,14 @@ class VerticalCard extends StatelessWidget {
         fit: BoxFit.cover,
       );
     } else {
-      return Image.file(
-        File(book.imageUrl),
+      // return Image.file(
+      //   File(book.imageUrl),
+      //   height: 270,
+      //   width: 175,
+      //   fit: BoxFit.cover,
+      // );
+      return Image.network(
+        book.imageUrl,
         height: 270,
         width: 175,
         fit: BoxFit.cover,

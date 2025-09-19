@@ -1,4 +1,5 @@
 import 'package:book_tracker_app/Controller/book_controller.dart';
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/custom_drop_down_field.dart';
@@ -92,16 +93,16 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
 
     File? croppedResult = await cropImage(File(image.path));
     if (croppedResult != null) {
-      final appDir = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileExtension = path.extension(croppedResult.path);
-      final newFileName = 'cover_$timestamp$fileExtension';
+      // final appDir = await getApplicationDocumentsDirectory();
+      // final timestamp = DateTime.now().millisecondsSinceEpoch;
+      // final fileExtension = path.extension(croppedResult.path);
+      // final newFileName = 'cover_$timestamp$fileExtension';
 
-      final permanentFilePath = path.join(appDir.path, newFileName);
-      final permanentFile = await croppedResult.copy(permanentFilePath);
+      // final permanentFilePath = path.join(appDir.path, newFileName);
+      // final permanentFile = await croppedResult.copy(permanentFilePath);
 
       setState(() {
-        croppedImage = permanentFile;
+        croppedImage = croppedResult;
         print('Gambar disimpan di path: ${croppedImage!.path}');
       });
     }
@@ -111,7 +112,6 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
     });
   }
 
-
   DecorationImage _buildBookImage() {
     if (bookInfo.imageUrl.startsWith('assets/')) {
       return DecorationImage(
@@ -120,7 +120,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
       );
     } else {
       return DecorationImage(
-        image: FileImage(File(bookInfo.imageUrl)),
+        image: NetworkImage(bookInfo.imageUrl),
         fit: BoxFit.cover,
       );
     }
@@ -133,7 +133,8 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
         return AlertDialog(
           title: const Text('Delete Book'),
           content: const Text(
-              'Are you sure you want to delete this book? This action cannot be undone.'),
+            'Are you sure you want to delete this book? This action cannot be undone.',
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
@@ -143,7 +144,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
             ),
             TextButton(
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
-              onPressed: () { 
+              onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
@@ -154,21 +155,23 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
 
     // Lanjutkan hanya jika pengguna menekan 'Delete'
     if (shouldDelete == true) {
-      bool isSuccess = await Provider.of<BookController>(context, listen: false).deleteBook(bookInfo.id!); 
-      
+      bool isSuccess = await Provider.of<BookController>(
+        context,
+        listen: false,
+      ).deleteBook(bookInfo.userId, bookInfo.id);
+
       if (mounted) {
         if (isSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Book Deleted Successfully')),
           );
-          Navigator.of(context).pop(); 
+          Navigator.of(context).pop();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Failed to Delete Book')),
           );
         }
       }
-      
     }
   }
 
@@ -180,9 +183,14 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
           "Book Details",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
         ),
-        actions: [IconButton(icon: Icon(Icons.delete_outline), onPressed: () {
-         _showDeleteConfirmationDialog();
-        })],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete_outline),
+            onPressed: () {
+              _showDeleteConfirmationDialog();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -222,7 +230,7 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
                             ? "Please enter a title"
                             : null,
                         controller: controllerTitle,
-                        // ✅ Gunakan dekorasi 
+                        // ✅ Gunakan dekorasi
                         label: 'Title',
                       ),
                       const SizedBox(height: 16.0), // Jarak antar field
@@ -279,85 +287,151 @@ class _DetailBookScreenState extends State<DetailBookScreen> {
                         ),
                       ],
                       const SizedBox(height: 32.0),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              final totalPage =
-                                  int.tryParse(controllerTotalPage.text) ?? 0;
-                              final progress =
-                                  int.tryParse(controllerProgress.text) ?? 0;
 
-                              String? insertedReadingStatus;
+                      Consumer<BookController>(
+                        builder:
+                            (
+                              BuildContext context,
+                              BookController controller,
+                              Widget? child,
+                            ) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: (controller.isLoading)
+                                    ? Center(child: CircularProgressIndicator())
+                                    : ElevatedButton(
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            bool isSuccess = false;
+                                            final totalPage =
+                                                int.tryParse(
+                                                  controllerTotalPage.text,
+                                                ) ??
+                                                0;
+                                            final progress =
+                                                int.tryParse(
+                                                  controllerProgress.text,
+                                                ) ??
+                                                0;
 
-                              switch (selectedReadingStatus) {
-                                case 'Not Started':
-                                  insertedReadingStatus = 'not_started';
-                                  break;
+                                            String? insertedReadingStatus;
 
-                                case 'Started':
-                                  insertedReadingStatus = 'started';
-                                  break;
+                                            switch (selectedReadingStatus) {
+                                              case 'Not Started':
+                                                insertedReadingStatus =
+                                                    'not_started';
+                                                break;
 
-                                case 'Finished':
-                                  insertedReadingStatus = 'finished';
-                                  break;
-                              }
+                                              case 'Started':
+                                                insertedReadingStatus =
+                                                    'started';
+                                                break;
 
-                              File? bookImage;
+                                              case 'Finished':
+                                                insertedReadingStatus =
+                                                    'finished';
+                                                break;
+                                            }
 
-                              if (croppedImage == null) {
-                                bookImage = File(bookInfo.imageUrl);
-                              } else {
-                                bookImage = croppedImage;
-                              }
+                                            if (croppedImage == null) {
+                                              Map<String, dynamic> bookMap = {
+                                                'title': controllerTitle.text,
+                                                'author': controllerAuthor.text,
+                                                'genre': controllerGenre.text,
+                                                'total_page': totalPage,
+                                                'progress': progress,
+                                                'reading_status':
+                                                    insertedReadingStatus,
+                                              };
 
-                              Map<String, dynamic> bookMap = {
-                                'title': controllerTitle.text,
-                                'author': controllerAuthor.text,
-                                'genre': controllerGenre.text,
-                                'total_page': totalPage,
-                                'progress': progress,
-                                'reading_status': insertedReadingStatus,
-                                'image_url': bookImage?.path.toString() ?? '',
-                              };
+                                              String userId =
+                                                  Provider.of<UserController>(
+                                                    context,
+                                                    listen: false,
+                                                  ).user.userId;
 
-                              bool isSuccess = await Provider.of<BookController>(context, listen: false).updateBook(bookInfo.id!, bookMap);
+                                              isSuccess = await controller
+                                                  .updateBook(
+                                                    userId,
+                                                    bookInfo.id,
+                                                    bookMap,
+                                                  );
+                                            } else {
+                                              Map<String, dynamic> bookMap = {
+                                                'title': controllerTitle.text,
+                                                'author': controllerAuthor.text,
+                                                'genre': controllerGenre.text,
+                                                'total_page': totalPage,
+                                                'progress': progress,
+                                                'reading_status':
+                                                    insertedReadingStatus,
+                                                'image_url':
+                                                    croppedImage?.path
+                                                        .toString() ??
+                                                    '',
+                                              };
+                                              String userId =
+                                                  Provider.of<UserController>(
+                                                    context,
+                                                    listen: false,
+                                                  ).user.userId;
 
-                              if (isSuccess) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Book Updated Successfully'),
-                                  ),
-                                );
-                                Navigator.pop(context);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Failed to Update Book'),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: AppColors.secondary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32.0),
-                            ),
-                          ),
-                          child: const Text(
-                            "Update Book",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                                              isSuccess = await controller
+                                                  .updateBook(
+                                                    userId,
+                                                    bookInfo.id,
+                                                    bookMap,
+                                                  );
+                                            }
+
+                                            if (isSuccess) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Book Updated Successfully',
+                                                  ),
+                                                ),
+                                              );
+                                              Navigator.pop(context);
+                                            } else {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Failed to Update Book',
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: AppColors.secondary,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              32.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Update Book",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                              );
+                            },
                       ),
                     ],
                   ),

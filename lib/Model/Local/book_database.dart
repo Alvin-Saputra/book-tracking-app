@@ -29,40 +29,42 @@ class BookDatabase {
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE books (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT,
         title TEXT,
         author TEXT,
         genre TEXT,
         total_page INTEGER,
         progress INTEGER,
         reading_status TEXT,
-        added_at TEXT,
-        image_url TEXT
+        added_at INTEGER,
+        image_url TEXT,
+        user_id TEXT
       )
     ''');
 
     // Prepopulate data
-    await _prepopulateDB(db);
+    // await _prepopulateDB(db);
   }
 
-  Future<void> _prepopulateDB(Database db) async {
-    final String jsonString =
-        await rootBundle.loadString('assets/data/books.json');
-    final List<dynamic> jsonData = jsonDecode(jsonString);
+  // Future<void> _prepopulateDB(Database db) async {
+  //   final String jsonString =
+  //       await rootBundle.loadString('assets/data/books.json');
+  //   final List<dynamic> jsonData = jsonDecode(jsonString);
 
-    for (var item in jsonData) {
-      await db.insert('books', {
-        'title': item['title'],
-        'author': item['author'],
-        'genre': item['genre'],
-        'total_page': item['total_page'],
-        'progress': item['progress']?? 0,
-        'reading_status': item['reading_status'],
-        'added_at': item['added_at'],
-        'image_url': item['image_url'],
-      });
-    }
-  }
+  //   for (var item in jsonData) {
+  //     await db.insert('books', {
+  //       'title': item['title'],
+  //       'author': item['author'],
+  //       'genre': item['genre'],
+  //       'total_page': item['total_page'],
+  //       'progress': item['progress']?? 0,
+  //       'reading_status': item['reading_status'],
+  //       'added_at': item['added_at'],
+  //       'image_url': item['image_url'],
+  //       'user_id': item['user_id']
+  //     });
+  //   }
+  // }
 
   Future close() async {
     final db = await instance.database;

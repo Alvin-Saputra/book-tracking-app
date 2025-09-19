@@ -1,9 +1,9 @@
 import 'dart:ffi';
 import 'package:book_tracker_app/Controller/book_controller.dart';
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/carousel_widget.dart';
-import 'package:book_tracker_app/View/Components/carousel_widget_2.dart';
 import 'package:book_tracker_app/View/Components/horizontal_card.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
 import 'package:book_tracker_app/constant/color.dart';
@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
-    Provider.of<BookController>(context, listen: false).fetchBooks();
+    Provider.of<BookController>(context, listen: false).fetchBooks(Provider.of<UserController>(context, listen: false).user.userId);
   }
 
   @override
@@ -52,18 +52,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  // left: 12.0,
-                                  bottom: 12.0,
-                                  top: 32.0,
+                                  left: 12.0,
+                                  bottom: 24.0,
+                                  // top: 32.0,
                                 ),
                                 child: Text(
                                   "Recently Added",
                                   style: GoogleFonts.roboto(
-                                    fontSize: 24,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.text,
                                   ),
@@ -74,13 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           CarouselWidget(
                             book: controller.books,
                             enlargeCenterPage: true,
-                            carouselHeight: 480,
+                            carouselHeight: 475,
                             imageHeight: 375,
                             imageWidth: 225,
                             viewportFraction: 0.65, 
                             enlargeFactor: 0.15,
                           ),
-                          SizedBox(height: 12.0),
+                          // SizedBox(height: 12.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [

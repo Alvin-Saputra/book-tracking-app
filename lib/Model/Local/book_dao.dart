@@ -10,7 +10,7 @@ class BookDao {
 
     List<Map> bookMaps = await bookDB.query(
       'books',
-      orderBy: 'id DESC',
+      orderBy: 'added_at DESC',
       limit: 5,
     );
 
@@ -26,6 +26,7 @@ class BookDao {
         progress: bookMaps[index]['progress'],
         addedAt: bookMaps[index]['added_at'],
         imageUrl: bookMaps[index]['image_url'],
+        userId: bookMaps[index]['user_id'],
       ),
     );
 
@@ -58,6 +59,7 @@ class BookDao {
         progress: bookMaps[index]['progress'],
         addedAt: bookMaps[index]['added_at'],
         imageUrl: bookMaps[index]['image_url'],
+        userId: bookMaps[index]['user_id'],
       ),
     );
 
@@ -67,7 +69,7 @@ class BookDao {
   Future<List<Book>> getAllBooks() async {
     final bookDB = await _db.database;
 
-    List<Map> bookMaps = await bookDB.query('books', orderBy: 'id DESC');
+    List<Map> bookMaps = await bookDB.query('books', orderBy: 'added_at DESC');
 
     List<Book> listBook = List.generate(
       bookMaps.length,
@@ -81,22 +83,24 @@ class BookDao {
         progress: bookMaps[index]['progress'],
         addedAt: bookMaps[index]['added_at'],
         imageUrl: bookMaps[index]['image_url'],
+        userId: bookMaps[index]['user_id'],
       ),
     );
 
     return listBook;
   }
 
-  Future<int> addBook(Map<String, dynamic> bookMap) async {
+  Future<bool> addBook(Map<String, dynamic> bookMap) async {
     final bookDB = await _db.database;
-    return bookDB.insert(
+    int rows = await bookDB.insert(
       'books',
       bookMap,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    return rows > 0;
   }
 
-  Future<bool> updateBook(int bookId, Map<String, dynamic> bookMap) async {
+  Future<bool> updateBook(String bookId, Map<String, dynamic> bookMap) async {
     final bookDB = await _db.database;
     int rowsAffected = await bookDB.update(
       'books',
@@ -107,7 +111,7 @@ class BookDao {
     return rowsAffected > 0;
   }
 
-  Future<bool> deleteBook(int bookId) async {
+  Future<bool> deleteBook(String bookId) async {
     final bookDB = await _db.database;
     int rowsAffected = await bookDB.delete(
       'books',
@@ -115,5 +119,34 @@ class BookDao {
       whereArgs: [bookId],
     );
     return rowsAffected > 0;
+  }
+
+  Future<bool> insertListOfBooks(List<Book> books) async {
+    try {
+      final bookDB = await _db.database;
+      await bookDB.transaction((txn) async {
+        Batch batch = txn.batch();
+        for (var element in books) {
+          Map<String, dynamic> taskMap = {
+            'id': element.id,
+            'title': element.title,
+            'author': element.author,
+            'genre': element.genre,
+            'total_page': element.totalPage,
+            'reading_status': element.readingStatus,
+            'progress': element.progress,
+            'added_at': element.addedAt,
+            'image_url': element.imageUrl,
+            'user_id': element.userId,
+          };
+          batch.insert('books', taskMap);
+        }
+        await batch.commit(noResult: true);
+      });
+      return true; // sukses
+    } catch (e) {
+      print("Error saat batch insert: $e");
+      return false; // gagal
+    }
   }
 }

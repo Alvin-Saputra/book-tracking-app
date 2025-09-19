@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-Future<Map<String, dynamic>> registrationService(Map<dynamic, dynamic> signUpData) async {
+Future<Map<String, dynamic>> registrationService(
+  Map<dynamic, dynamic> signUpData,
+) async {
   final apiKey = dotenv.env['API_KEY'] ?? 'NO_KEY_FOUND';
   var response = await http.post(
     Uri.parse(
@@ -14,7 +16,7 @@ Future<Map<String, dynamic>> registrationService(Map<dynamic, dynamic> signUpDat
   );
   final responseData = jsonDecode(response.body);
 
-   if (response.statusCode != 200) {
+  if (response.statusCode != 200) {
     String errorMessage = 'Some error occurred, please try again later';
 
     if (responseData['error'] != null) {
@@ -25,10 +27,10 @@ Future<Map<String, dynamic>> registrationService(Map<dynamic, dynamic> signUpDat
         case 'INVALID_PASSWORD':
           errorMessage = 'Invalid Password';
           break;
-         case 'INVALID_EMAIL':
+        case 'INVALID_EMAIL':
           errorMessage = 'Invalid Email Format';
           break;
-         case 'INVALID_LOGIN_CREDENTIALS':
+        case 'INVALID_LOGIN_CREDENTIALS':
           errorMessage = 'Invalid Login Credentials';
           break;
         case 'USER_DISABLED':
@@ -44,7 +46,9 @@ Future<Map<String, dynamic>> registrationService(Map<dynamic, dynamic> signUpDat
   return responseData as Map<String, dynamic>;
 }
 
-Future<Map<String, dynamic>> loginService(Map<String, dynamic> loginData) async {
+Future<Map<String, dynamic>> loginService(
+  Map<String, dynamic> loginData,
+) async {
   final apiKey = dotenv.env['API_KEY'] ?? 'NO_KEY_FOUND';
 
   final response = await http.post(
@@ -69,10 +73,10 @@ Future<Map<String, dynamic>> loginService(Map<String, dynamic> loginData) async 
         case 'INVALID_PASSWORD':
           errorMessage = 'Invalid Password';
           break;
-         case 'INVALID_EMAIL':
+        case 'INVALID_EMAIL':
           errorMessage = 'Invalid Email Format';
           break;
-         case 'INVALID_LOGIN_CREDENTIALS':
+        case 'INVALID_LOGIN_CREDENTIALS':
           errorMessage = 'Invalid Login Credentials';
           break;
         case 'USER_DISABLED':
@@ -87,3 +91,4 @@ Future<Map<String, dynamic>> loginService(Map<String, dynamic> loginData) async 
   // Jika sukses, return data
   return responseData as Map<String, dynamic>;
 }
+

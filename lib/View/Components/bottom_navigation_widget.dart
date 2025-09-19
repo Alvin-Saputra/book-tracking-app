@@ -25,7 +25,7 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   void _goToAddBook() {
     setState(() {
-      _currentIndex = 1; 
+      _currentIndex = 1;
     });
   }
 
@@ -60,9 +60,26 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
         actions: <Widget>[
           Consumer<UserController>(
             builder:
-                (BuildContext context, UserController controller, Widget? child) {
+                (
+                  BuildContext context,
+                  UserController controller,
+                  Widget? child,
+                ) {
                   return PopupMenuButton<String>(
-                     icon: CircleAvatar(child: const Icon(Icons.person, color: AppColors.secondary), backgroundColor: AppColors.quaternary,),
+                    icon: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.secondary, 
+                          width: 1,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.person,
+                        color: AppColors.secondary,
+                      ),
+                    ),
                     onSelected: (String result) async {
                       if (result == 'logout') {
                         await controller.clearData();
@@ -74,7 +91,10 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
                             value: 'email',
                             child: Row(
                               children: [
-                                const Icon(Icons.email_outlined, color: AppColors.secondary),
+                                const Icon(
+                                  Icons.email_outlined,
+                                  color: AppColors.secondary,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(controller.user.email),
                               ],

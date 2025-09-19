@@ -1,7 +1,8 @@
 // lib/Controller/book_controller.dart
-
+import 'dart:io';
 import 'dart:math';
 
+import 'package:book_tracker_app/Model/remote/book_api_service.dart';
 import 'package:flutter/material.dart';
 import '../Model/Local/book.dart';
 import '../Model/Local/book_dao.dart';
@@ -14,21 +15,17 @@ class BookController with ChangeNotifier {
   List<Book> _books = [];
   List<Book> get books => _books;
 
-
-  // ✅ GETTER BARU UNTUK BUKU YANG BARU DITAMBAHKAN
   List<Book> get recentlyAddedBooks {
-    // Diasumsikan buku baru memiliki ID yang lebih tinggi
-    var sortedBooks = List<Book>.from(_books)..sort((a, b) => b.id!.compareTo(a.id!));
-    // Ambil 5 buku teratas, atau kurang jika total buku kurang dari 5
+    var sortedBooks = List<Book>.from(_books)
+      ..sort((a, b) => b.id!.compareTo(a.id!));
     return sortedBooks.sublist(0, min(5, sortedBooks.length));
   }
 
-  // ✅ GETTER BARU UNTUK BUKU YANG SEDANG DIBACA
   List<Book> get currentlyReadBooks {
-    var filteredBooks = _books.where((book) => book.readingStatus == 'started').toList();
-    // Urutkan berdasarkan yang terbaru juga
+    var filteredBooks = _books
+        .where((book) => book.readingStatus == 'started')
+        .toList();
     filteredBooks.sort((a, b) => b.id!.compareTo(a.id!));
-    // Ambil 3 buku teratas, atau kurang jika hasilnya kurang dari 3
     return filteredBooks.sublist(0, min(3, filteredBooks.length));
   }
 
@@ -36,35 +33,98 @@ class BookController with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   // Mengambil semua buku
-  Future<void> fetchBooks() async {
+  Future<void> fetchBooks([String? userId]) async {
     _setLoading(true);
     _books = await _bookDao.getAllBooks();
+    if (_books.isEmpty) {
+      List<Book> booksFromFirebase = await getBooksRemote(userId!);
+      bool isSuccess = await _bookDao.insertListOfBooks(booksFromFirebase);
+      if (isSuccess) {
+        _books = await _bookDao.getAllBooks();
+        notifyListeners();
+      }
+    }
     _setLoading(false);
   }
 
-  // Menambah buku
-  Future<int> addBook(Map<String, dynamic> bookMap) async {
-    int row = await _bookDao.addBook(bookMap);
-    await fetchBooks(); // Muat ulang daftar buku setelah menambah
-    return row;
+  Future<bool> addBook(Map<String, dynamic> bookMap) async {
+    _setLoading(true);
+    try {
+      Map<String, dynamic> dataMap = bookMap;
+      String imageUrl = await uploadImage(File(dataMap['image_url']));
+      dataMap['image_url'] = imageUrl;
+
+      bool addedToRemote = await addBookRemote(dataMap);
+      bool addedToLocal = false;
+      if (addedToRemote) {
+        addedToLocal = await _bookDao.addBook(dataMap);
+      }
+      await fetchBooks();
+      _setLoading(false);
+      return addedToLocal;
+    } catch (e) {
+      _setLoading(false);
+      rethrow;
+    }
   }
 
   // Menghapus buku
-  Future<bool> deleteBook(int id) async {
-    bool isSuccess = await _bookDao.deleteBook(id);
-    await fetchBooks(); // Muat ulang daftar buku setelah menghapus
-    return isSuccess;
+  Future<bool> deleteBook(String userId, String bookId) async {
+    _setLoading(true);
+    try {
+      bool isRemoveFromRemote = await deleteBookRemote(userId, bookId);
+      bool isremoveFromLocal = false;
+      if (isRemoveFromRemote) {
+        isremoveFromLocal = await _bookDao.deleteBook(bookId);
+      }
+      await fetchBooks();
+      _setLoading(false);
+      return isremoveFromLocal;
+    } catch (e) {
+      _setLoading(false);
+      rethrow;
+    }
   }
 
-    // Menghapus buku
-  Future<bool> updateBook(int id, Map<String, dynamic> bookMap) async {
-    bool isSuccess = await _bookDao.updateBook(id, bookMap);
-    await fetchBooks(); // Muat ulang daftar buku setelah menghapus
-    return isSuccess;
+  // Menghapus buku
+  Future<bool> updateBook(
+    String userId,
+    String bookId,
+    Map<String, dynamic> bookMap,
+  ) async {
+    _setLoading(true);
+    try {
+      if (bookMap.containsKey('image_url')) {
+        Map<String, dynamic> dataMap = bookMap;
+        String imageUrl = await uploadImage(File(dataMap['image_url']));
+        dataMap['image_url'] = imageUrl;
+
+        bool updatedOnRemote = await updateBookRemote(userId, bookId, dataMap);
+        bool updatedOnLocal = false;
+        if (updatedOnRemote) {
+          updatedOnLocal = await _bookDao.updateBook(bookId, dataMap);
+        }
+        await fetchBooks();
+        _setLoading(false);
+        return updatedOnLocal;
+      } else {
+        bool updatedOnRemote = await updateBookRemote(userId, bookId, bookMap);
+        bool updatedOnLocal = false;
+        if (updatedOnRemote) {
+          updatedOnLocal = await _bookDao.updateBook(bookId, bookMap);
+        }
+        await fetchBooks();
+        _setLoading(false);
+        return updatedOnLocal;
+      }
+    } catch (e) {
+      _setLoading(false);
+      rethrow;
+    }
   }
 
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners(); // Memberi tahu listener (UI) bahwa ada perubahan
+    notifyListeners();
   }
 }

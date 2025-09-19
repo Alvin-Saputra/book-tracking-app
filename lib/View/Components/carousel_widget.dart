@@ -36,7 +36,7 @@ class CarouselWidget extends StatelessWidget {
     } else {
       return ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
-        child: Image.file(File(book.imageUrl), fit: BoxFit.cover),
+        child: Image.network((book.imageUrl), fit: BoxFit.cover),
       );
     }
   }

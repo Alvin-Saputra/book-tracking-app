@@ -1,4 +1,5 @@
 import 'package:book_tracker_app/Controller/book_controller.dart';
+import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/Local/book.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/vertical_card.dart';
@@ -21,7 +22,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<BookController>(context, listen: false).fetchBooks();
+    Provider.of<BookController>(context, listen: false).fetchBooks(Provider.of<UserController>(context, listen: false).user.userId);
   }
 
   @override

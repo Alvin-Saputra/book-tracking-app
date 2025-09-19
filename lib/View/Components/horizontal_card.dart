@@ -22,8 +22,8 @@ class HorizontalCard extends StatelessWidget {
       );
     } else {
       // Jika tidak, itu adalah file dari penyimpanan, gunakan Image.file
-      return Image.file(
-        File(book.imageUrl),
+      return Image.network(
+        book.imageUrl,
         height: 116,
         width: 86,
         fit: BoxFit.cover,

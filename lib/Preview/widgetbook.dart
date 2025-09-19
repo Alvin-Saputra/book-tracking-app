@@ -15,14 +15,15 @@ class HotReload extends StatelessWidget {
   HotReload({Key? key}) : super(key: key);
 
   final book = Book(
-    id: 1,
+    id: "adasdajsdbashbd",
     title: 'Tale of The Frog',
     author: 'F. Scott Fitzgerald',
     genre: 'Classic',
     totalPage: 180,
     readingStatus: 'Reading',
-    addedAt: '2023-10-01',
-    imageUrl: 'assets/images/book_1.jpg',
+    addedAt: 100000,
+    imageUrl: 'assets/images/book_1.jpg', 
+    userId: 'kdMfb9fRD5RaCIRT8hK5Uu6YcK52',
   );
 
   @override
