@@ -1,3 +1,4 @@
+import 'package:book_tracker_app/Controller/book_controller.dart';
 import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/View/Screens/add_book_screen.dart';
 import 'package:book_tracker_app/View/Screens/home_screen.dart';
@@ -89,6 +90,7 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
                     ),
                     onSelected: (String result) async {
                       if (result == 'logout') {
+                        await Provider.of<BookController>(context, listen: false).deleteAllBooks();
                         await controller.clearData();
                       }
                     },

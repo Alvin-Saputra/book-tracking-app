@@ -123,14 +123,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   );
 
                                               if (isSuccess && mounted) {
-                                                Navigator.pushAndRemoveUntil(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        BottomNavigationWidget(),
+                                                 Navigator.of(context).pushAndRemoveUntil(
+                                                  PageRouteBuilder(
+                                                    pageBuilder: (context, animation, secondaryAnimation) => BottomNavigationWidget(),
+                                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                                      const begin = 0.0;
+                                                      const end = 1.0;
+                                                      const curve = Curves.ease;
+                                                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                                      return FadeTransition(
+                                                        opacity: animation.drive(tween),
+                                                        child: child,
+                                                      );
+                                                    },
+                                                    transitionDuration: const Duration(milliseconds: 500),
                                                   ),
-                                                  (Route<dynamic> route) =>
-                                                      false,
+                                                  (Route<dynamic> route) => false,
                                                 );
                                               }
                                             } catch (error) {

@@ -57,6 +57,11 @@ class BookController with ChangeNotifier {
     _setLoading(false);
   }
 
+  Future<bool> deleteAllBooks() async {
+   bool isSuccess =  await _bookDao.deleteAllBooks();
+   return isSuccess;
+  }
+
   Future<bool> addBook(Map<String, dynamic> bookMap) async {
     _setLoading(true);
     try {

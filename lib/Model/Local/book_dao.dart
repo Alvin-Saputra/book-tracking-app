@@ -121,6 +121,17 @@ class BookDao {
     return rowsAffected > 0;
   }
 
+  Future<bool> deleteAllBooks() async {
+  final bookDB = await _db.database;
+  try {
+    await bookDB.delete('books'); 
+    return true;
+  } catch (e) {
+    print("Error saat delete all books: $e");
+    return false;
+  }
+}
+
   Future<bool> insertListOfBooks(List<Book> books) async {
     try {
       final bookDB = await _db.database;
