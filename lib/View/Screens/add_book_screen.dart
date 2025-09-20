@@ -3,6 +3,7 @@ import 'package:book_tracker_app/Controller/user_controller.dart';
 import 'package:book_tracker_app/Model/Local/book_dao.dart';
 import 'package:book_tracker_app/View/Components/custom_drop_down_field.dart';
 import 'package:book_tracker_app/View/Components/custom_input_text_field.dart';
+import 'package:book_tracker_app/View/Screens/home_screen.dart';
 import 'package:book_tracker_app/constant/color.dart';
 import 'package:book_tracker_app/utils/image_cropper_utils.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,9 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class AddBookScreen extends StatefulWidget {
-  const AddBookScreen({super.key});
+  const AddBookScreen({super.key, required this.onNavigateToHome});
+
+  final VoidCallback? onNavigateToHome;
 
   @override
   State<AddBookScreen> createState() => _AddBookScreenState();
@@ -295,6 +298,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                                     ),
                                                   ),
                                                 );
+                                                widget.onNavigateToHome!();
                                               } else {
                                                 ScaffoldMessenger.of(
                                                   context,

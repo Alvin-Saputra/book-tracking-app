@@ -37,11 +37,21 @@ class BookController with ChangeNotifier {
     _setLoading(true);
     _books = await _bookDao.getAllBooks();
     if (_books.isEmpty) {
-      List<Book> booksFromFirebase = await getBooksRemote(userId!);
-      bool isSuccess = await _bookDao.insertListOfBooks(booksFromFirebase);
-      if (isSuccess) {
-        _books = await _bookDao.getAllBooks();
-        notifyListeners();
+      if (userId != null) {
+        List<Book> booksFromFirebase = await getBooksRemote(userId!);
+        if (booksFromFirebase.isNotEmpty) {
+          bool isSuccess = await _bookDao.insertListOfBooks(booksFromFirebase);
+          if (isSuccess) {
+            _books = await _bookDao.getAllBooks();
+            notifyListeners();
+          }
+        } else {
+          _setLoading(false);
+          return;
+        }
+      } else {
+        _setLoading(false);
+        return;
       }
     }
     _setLoading(false);

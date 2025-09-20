@@ -15,8 +15,9 @@ class CarouselWidget extends StatelessWidget {
     required this.carouselHeight,
     required this.imageHeight,
     required this.imageWidth,
-    required this.viewportFraction, required this.enlargeFactor,
-
+    required this.viewportFraction,
+    required this.enlargeFactor, 
+    required this.textAlignment,
   });
 
   final List<Book> book;
@@ -26,6 +27,7 @@ class CarouselWidget extends StatelessWidget {
   final double imageWidth;
   final double viewportFraction;
   final double enlargeFactor;
+  final MainAxisAlignment textAlignment;
 
   Widget _buildBookImage(Book book) {
     if (book.imageUrl.startsWith('assets/')) {
@@ -80,28 +82,38 @@ class CarouselWidget extends StatelessWidget {
 
                   Container(
                     margin: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      bookItem.title,
-                      style: GoogleFonts.roboto(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.text,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    child: Row(
+                      mainAxisAlignment: textAlignment,
+                      children: [
+                        Text(
+                          bookItem.title,
+                          style: GoogleFonts.roboto(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.text,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      bookItem.author,
-                      style: GoogleFonts.roboto(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        color: AppColors.text,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    child: Row(
+                      mainAxisAlignment: textAlignment,
+                      children: [
+                        Text(
+                          bookItem.author,
+                          style: GoogleFonts.roboto(
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.text,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ),
                   ),
                 ],

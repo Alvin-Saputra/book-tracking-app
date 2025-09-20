@@ -24,7 +24,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
-    Provider.of<BookController>(context, listen: false).fetchBooks(Provider.of<UserController>(context, listen: false).user.userId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<BookController>(context, listen: false).fetchBooks(
+        Provider.of<UserController>(context, listen: false).user.userId,
+      );
+    });
   }
 
   @override
@@ -52,18 +56,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  left: 12.0,
-                                  bottom: 24.0,
+                                  bottom: 32.0,
+                                  top: 32.0,
                                   // top: 32.0,
                                 ),
                                 child: Text(
                                   "Recently Added",
                                   style: GoogleFonts.roboto(
-                                    fontSize: 18,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.text,
                                   ),
@@ -77,8 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             carouselHeight: 475,
                             imageHeight: 375,
                             imageWidth: 225,
-                            viewportFraction: 0.65, 
+                            viewportFraction: 0.65,
                             enlargeFactor: 0.15,
+                            textAlignment: MainAxisAlignment.start,
                           ),
                           // SizedBox(height: 12.0),
                           Row(
@@ -144,7 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             carouselHeight: 575,
                             imageHeight: 400,
                             imageWidth: 225,
-                            viewportFraction: 0.6, enlargeFactor: 0.3,
+                            viewportFraction: 0.6,
+                            enlargeFactor: 0.3,
+                            textAlignment: MainAxisAlignment.center,
                           ),
                         ],
                       );

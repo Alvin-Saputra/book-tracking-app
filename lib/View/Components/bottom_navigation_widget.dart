@@ -19,7 +19,7 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   int _currentIndex = 0;
   late final List<Widget> _screens = [
     HomeScreen(onNavigateToAddBook: _goToAddBook),
-    AddBookScreen(),
+    AddBookScreen(onNavigateToHome: _goToHome),
     LibraryScreen(onNavigateToAddBook: _goToAddBook),
   ];
 
@@ -28,6 +28,13 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       _currentIndex = 1;
     });
   }
+
+    void _goToHome() {
+    setState(() {
+      _currentIndex = 0;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {

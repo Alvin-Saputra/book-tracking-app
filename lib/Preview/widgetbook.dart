@@ -51,7 +51,7 @@ class HotReload extends StatelessWidget {
           useCases: [
             WidgetbookUseCase(
               name: 'Add Book Screen',
-              builder: (context) => Center(child: AddBookScreen()),
+              builder: (context) => Center(child: AddBookScreen(onNavigateToHome: (){})),
             ),
 
             WidgetbookUseCase(

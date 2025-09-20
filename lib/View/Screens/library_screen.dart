@@ -22,7 +22,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<BookController>(context, listen: false).fetchBooks(Provider.of<UserController>(context, listen: false).user.userId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<BookController>(context, listen: false).fetchBooks(
+        Provider.of<UserController>(context, listen: false).user.userId,
+      );
+    });
   }
 
   @override
@@ -57,8 +61,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     child: ClipRect(
                       child: Align(
                         alignment: Alignment.center,
-                        widthFactor: 0.65, 
-                        heightFactor: 0.65, 
+                        widthFactor: 0.65,
+                        heightFactor: 0.65,
                         child: Lottie.asset('assets/animation/Book.json'),
                       ),
                     ),
