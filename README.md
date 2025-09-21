@@ -22,7 +22,7 @@ Before running the project, ensure you have **Flutter** and **Dart SDK** install
 
 1. **Clone the repository:**  
    ```bash
-   git clone [YOUR_REPOSITORY_URL]
+   git clone https://github.com/Alvin-Saputra/book-tracking-app.git
 
 2. **Navigate to the project directory:**  
    ```bash
