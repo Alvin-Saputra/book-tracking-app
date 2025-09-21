@@ -1,6 +1,6 @@
-# book_tracker_app
+# Book Tracker App
 
-A new Flutter project.
+The Book Tracker App is a project built with Flutter, designed to help users track and manage their books. With this application, users can log books they have read, are currently reading, or want to read.
 
 ## Getting Started
 
