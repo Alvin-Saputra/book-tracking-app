@@ -1,16 +1,25 @@
-# Book Tracker App
+# 📚 Book Tracker App
 
-The Book Tracker App is a project built with Flutter, designed to help users track and manage their books. With this application, users can log books they have read, are currently reading, or want to read.
+The **Book Tracker App** is a Flutter-based project that helps users track and manage their reading journey. With this app, you can log books you’ve read, are currently reading, or plan to read in the future.  
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features  
 
-A few resources to get you started if this is your first Flutter project:
+- **User Authentication** – Register and log in securely.  
+- **Book Tracking** – Add, update, and manage your personal book collection.  
+- **Local Database** – Powered by `sqflite`, your book data is always available offline.  
+- **Book Covers** – Capture or select images from your gallery, with cropping support via `image_picker` and `image_cropper`.  
+- **Smooth Navigation** – Bottom navigation bar for quick access to Home, Library, and other pages.  
+- **API Integration** – Fetch and sync data using the `http` package.  
+- **Modern UI** – Clean, user-friendly design with `google_fonts`, `font_awesome_flutter`, and animated assets via `lottie`.  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Installation  
+
+Before running the project, ensure you have **Flutter** and **Dart SDK** installed.  
+
+1. **Clone the repository:**  
+   ```bash
+   git clone [YOUR_REPOSITORY_URL]
