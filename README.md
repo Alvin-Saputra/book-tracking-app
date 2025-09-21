@@ -23,3 +23,16 @@ Before running the project, ensure you have **Flutter** and **Dart SDK** install
 1. **Clone the repository:**  
    ```bash
    git clone [YOUR_REPOSITORY_URL]
+
+2. **Navigate to the project directory:**  
+   ```bash
+   cd book-tracker-app
+
+3. **Install The Dependencies:**  
+   ```bash
+   flutter pub get
+   
+4. **Run The App:**  
+   ```bash
+   flutter pub get
+
