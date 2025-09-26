@@ -1,6 +1,6 @@
-# 📚 Book Tracker App
+# 📚 Bookly - Book Tracker App
 
-The **Book Tracker App** is a Flutter-based project that helps users track and manage their reading journey. With this app, you can log books you’ve read, are currently reading, or plan to read in the future.  
+The **Bookly** is a Flutter-based project that helps users track and manage their reading journey. With this app, you can log books you’ve read, are currently reading, or plan to read in the future.  
 
 ---
 
